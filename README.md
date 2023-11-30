@@ -25,7 +25,7 @@ I also needed to add the following directive to CMake:
 RUNNING THE APPLICATION
 =======================
 To run the application I needed to copy the wstp64i64.dll next to where the executable is.
-It looks like this:
-![image](https://github.com/TEBBRS/CMakePylonCamLLU/assets/76159983/ca333b77-3422-4ce9-ad99-5c56b52ea5a6)
+It looks like this (see output.png)
+
 
 
