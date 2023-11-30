@@ -20,7 +20,8 @@ int main()
 	// WSTP Open a connection to the wolfram kernel
 	int error;
 	WSLINK link;
-	link = WSOpenString(env, " -linklaunch \"C:\\Program Files\\Wolfram Research\\Wolfram Engine\\13.3\\mathkernel.exe\"", &error);
+	link = WSOpenString(env, "-linklaunch", &error);
+	//link = WSOpenString(env, "-linklaunch \"C:\\Program Files\\Wolfram Research\\Wolfram Engine\\13.3\\mathkernel.exe\"", &error);
 
 	if(link == (WSLINK)0 || error != WSEOK)
 	{
@@ -41,39 +42,35 @@ int main()
 	
 	// Data exchange -->> MyProblem
 	std::cout << "Create the stream object" << std::endl;
-	LLU::WSStream<LLU::WS::Encoding::Native, LLU::WS::Encoding::Native> test(link);
-	//LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>::BidirStreamToken bidirToken=LLU::WS::Direction::;
-	LLU::WS::Function function;
+	LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8> test(link);
+	
+	// Wait for the prompt In[1]:=
+	LLU::WS::Function inputPacketFunction;
 	string inputNameString;
-	test >> function >> inputNameString;
-	cout << "Function head:"  << function.getHead() << " Arguments :" << function.getArgc() <<" String : " << inputNameString << endl;
+	test >> inputPacketFunction >> inputNameString;
+	cout << "Function head:"  << inputPacketFunction.getHead() << " Arguments :" << inputPacketFunction.getArgc() <<" String : " << inputNameString << endl;
 	
-	std::cout << "Add 2+2 to the stream" << std::endl;
-	
-	//test << (mint) 1 << LLU::WS::BeginExpr::BeginExpr("1") << "2+2" << LLU::WS::EndExpr();
-	//LLU::WS::String<LLU::WS::Encoding::UTF8> expression = "2+2";
-	//test << LLU::WS::NewPacket << "2+2" << LLU::WS::EndPacket;
-	WSPutString(test.get(), "2+2");
+	// Write the expression to the stream
+	std::cout << "Add 2+2+2 to the stream" << std::endl;
+	LLU::WS::Function enterExpressionFunction;
+	enterExpressionFunction.setHead("EnterExpressionPacket");
+	enterExpressionFunction.setArgc(1);
+
+	test << enterExpressionFunction << "2+2+2";
+
+	// Wait for output packet Out[1]:= and the computed results
 	std::cout << "Wait for output packet" << std::endl;
-	LLU::WS::Function function1;
+	LLU::WS::Function outputPacketFunction;
 	string outputNameString;
-	test >> function1 >> outputNameString;
-	cout << "Function head:" << function.getHead() << " Arguments :" << function.getArgc() << " String : " << outputNameString << endl;
+	LLU::WS::Function returnExpressionPacket;
+	string result;
+	test >> outputPacketFunction >> outputNameString >> returnExpressionPacket >> result;
+	cout << "Function head:" << outputPacketFunction.getHead() << " Arguments :" << outputPacketFunction.getArgc() << " String : " << outputNameString << endl;
+	cout << "Function head:" << returnExpressionPacket.getHead() << " Arguments :" << returnExpressionPacket.getArgc() << " String : " << result << endl;
 
-	std::cout << "Wait for a reply" << std::endl;
-	int result1;
-	//LLU::WS::GetAs <LLU::WS::Encoding::UTF8, int> result(result1);
-	//std::cout << WSGetType(test.get());
 
-	//	LLU::WS::Encoding::UTF8, int>(result1);
-	cout << "Hello CMake. Error : " << error << " Result : " << function.getHead() << " Arguments :" << function.getArgc() << endl;
 	std::cout << "Close the connection..." << std::endl;
 	
-
-	/*if (!WSEvaluate(link, (char*)"2+2;"))
-		std::cout << "Didn't send an expression to eveluate" << std::endl;
-	*/
-
 	// WSTP Close gracefully
 	WSClose(link);
 	WSDeinitialize(env);
