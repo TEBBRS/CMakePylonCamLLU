@@ -51,12 +51,14 @@ int main()
 	cout << "Function head:"  << inputPacketFunction.getHead() << " Arguments :" << inputPacketFunction.getArgc() <<" String : " << inputNameString << endl;
 	
 	// Write the expression to the stream
-	std::cout << "Add 2+2+2 to the stream" << std::endl;
+	std::cout << "Add Integrate[x, {x, 0, 10}] to the stream" << std::endl;
 	LLU::WS::Function enterExpressionFunction;
-	enterExpressionFunction.setHead("EnterExpressionPacket");
+	enterExpressionFunction.setHead("EnterTextPacket");
+	//enterExpressionFunction.setHead("EnterExpressionPacket");
+
 	enterExpressionFunction.setArgc(1);
 
-	test << enterExpressionFunction << "2+2+2";
+	test << enterExpressionFunction << "Integrate[x, {x, 0, 10}]";
 
 	// Wait for output packet Out[1]:= and the computed results
 	std::cout << "Wait for output packet" << std::endl;
@@ -67,6 +69,10 @@ int main()
 	test >> outputPacketFunction >> outputNameString >> returnExpressionPacket >> result;
 	cout << "Function head:" << outputPacketFunction.getHead() << " Arguments :" << outputPacketFunction.getArgc() << " String : " << outputNameString << endl;
 	cout << "Function head:" << returnExpressionPacket.getHead() << " Arguments :" << returnExpressionPacket.getArgc() << " String : " << result << endl;
+	LLU::WS::Function Packet;
+	test >> Packet;
+	cout << "Function head:" << Packet.getHead() << " Arguments :" << Packet.getArgc() << " String : " << endl;
+
 
 
 	std::cout << "Close the connection..." << std::endl;
