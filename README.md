@@ -26,4 +26,4 @@ RUNNING THE APPLICATION
 =======================
 To run the application I needed to copy the wstp64i64.dll next to where the executable is.
 It looks like this:
-![image](https://github.com/TEBBRS/CMakePylonCamLLU/assets/76159983/ae069c02-2af8-4b4d-abc0-53cb4c6f67
+
