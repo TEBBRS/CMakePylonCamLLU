@@ -20,8 +20,8 @@ int main(int argc, char* argv[])
 	// WSTP Open a connection to the wolfram kernel
 	int error;
 	WSLINK link;
-	link = WSOpenArgcArgv(env, argc, argv, &error);
-	//link = WSOpenString(env, "-linklaunch \"C:\\Program Files\\Wolfram Research\\Wolfram Engine\\13.3\\mathkernel.exe\"", &error);
+	//link = WSOpenArgcArgv(env, argc, argv, &error);
+	link = WSOpenString(env, "-linklaunch \"C:\\Program Files\\Wolfram Research\\Wolfram Engine\\13.3\\mathkernel.exe\"", &error);
 
 	if(link == (WSLINK)0 || error != WSEOK)
 	{
@@ -58,8 +58,17 @@ int main(int argc, char* argv[])
 		{
 			for (int i = 0; i < ArgCount; i++)
 			{
-				test >> inputNameString;
-				cout << inputNameString;
+				if (Head == "ReturnExpressionPacket")
+				{
+					int result;
+					test >> result;
+					cout << result;
+				}
+				else
+				{
+					test >> inputNameString;
+					cout << inputNameString;
+				}
 			}
 		}
 		if (Head == "InputNamePacket")
@@ -67,13 +76,12 @@ int main(int argc, char* argv[])
 			string inputTextString;
 			std::cin >> inputTextString;
 			//std::cout << "Add Integrate[x, {x, 0, 10}] to the stream" << std::endl;
-			LLU::WS::Function enterTextFunction("EnterTextPacket", 1);
-			test << enterTextFunction << inputTextString;
+			LLU::WS::Function enterTextFunction("Plus", 2);
+			test << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Plus", 2) << 1 << 1;
 
 		}
 
 	}
-
 
 	std::cout << "Close the connection..." << std::endl;
 	
