@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int main()
+int main(int argc, char* argv[])
 {
 	// WSTP Initialise
 	WSENV env = WSInitialize((char*)0);
@@ -20,7 +20,7 @@ int main()
 	// WSTP Open a connection to the wolfram kernel
 	int error;
 	WSLINK link;
-	link = WSOpenString(env, "-linklaunch", &error);
+	link = WSOpenArgcArgv(env, argc, argv, &error);
 	//link = WSOpenString(env, "-linklaunch \"C:\\Program Files\\Wolfram Research\\Wolfram Engine\\13.3\\mathkernel.exe\"", &error);
 
 	if(link == (WSLINK)0 || error != WSEOK)
@@ -43,36 +43,36 @@ int main()
 	// Data exchange -->> MyProblem
 	std::cout << "Create the stream object" << std::endl;
 	LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8> test(link);
-	
-	// Wait for the prompt In[1]:=
-	LLU::WS::Function inputPacketFunction;
-	string inputNameString;
-	test >> inputPacketFunction >> inputNameString;
-	cout << "Function head:"  << inputPacketFunction.getHead() << " Arguments :" << inputPacketFunction.getArgc() <<" String : " << inputNameString << endl;
-	
-	// Write the expression to the stream
-	std::cout << "Add Integrate[x, {x, 0, 10}] to the stream" << std::endl;
-	LLU::WS::Function enterExpressionFunction;
-	enterExpressionFunction.setHead("EnterTextPacket");
-	//enterExpressionFunction.setHead("EnterExpressionPacket");
 
-	enterExpressionFunction.setArgc(1);
+	while (true)
+	{
+		// Wait for the prompt In[1]:=
 
-	test << enterExpressionFunction << "Integrate[x, {x, 0, 10}]";
+		string inputNameString;
+		LLU::WS::Function inputPacketFunction;
+		test >> inputPacketFunction;
+		string Head = inputPacketFunction.getHead();
+		int ArgCount = inputPacketFunction.getArgc();
+		cout << "-->> Function head:" << Head << " Arguments :" << ArgCount << endl;
+		if (ArgCount < 10)
+		{
+			for (int i = 0; i < ArgCount; i++)
+			{
+				test >> inputNameString;
+				cout << inputNameString;
+			}
+		}
+		if (Head == "InputNamePacket")
+		{
+			string inputTextString;
+			std::cin >> inputTextString;
+			//std::cout << "Add Integrate[x, {x, 0, 10}] to the stream" << std::endl;
+			LLU::WS::Function enterTextFunction("EnterTextPacket", 1);
+			test << enterTextFunction << inputTextString;
 
-	// Wait for output packet Out[1]:= and the computed results
-	std::cout << "Wait for output packet" << std::endl;
-	LLU::WS::Function outputPacketFunction;
-	string outputNameString;
-	LLU::WS::Function returnExpressionPacket;
-	string result;
-	test >> outputPacketFunction >> outputNameString >> returnExpressionPacket >> result;
-	cout << "Function head:" << outputPacketFunction.getHead() << " Arguments :" << outputPacketFunction.getArgc() << " String : " << outputNameString << endl;
-	cout << "Function head:" << returnExpressionPacket.getHead() << " Arguments :" << returnExpressionPacket.getArgc() << " String : " << result << endl;
-	LLU::WS::Function Packet;
-	test >> Packet;
-	cout << "Function head:" << Packet.getHead() << " Arguments :" << Packet.getArgc() << " String : " << endl;
+		}
 
+	}
 
 
 	std::cout << "Close the connection..." << std::endl;
