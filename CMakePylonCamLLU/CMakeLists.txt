@@ -3,6 +3,8 @@
 #
 #set (LLU_ROOT "D:/VS2022/LLU/out/install/x64-Debug/cmake")
 set (LLU_ROOT "C:/Users/ikke/source/repos/LibraryLinkUtilities/out/install/x64-Debug")
+find_package(wxWidgets REQUIRED COMPONENTS net core base)
+find_package(pylon 7.1.0 REQUIRED)
 find_package(LLU NO_MODULE REQUIRED PATH_SUFFIXES LLU)
 # Add source to this project's executable.
 file (GLOB src src/*.cpp)

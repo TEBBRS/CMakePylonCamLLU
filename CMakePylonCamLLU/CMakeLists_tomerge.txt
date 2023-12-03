@@ -1,0 +1,27 @@
+cmake_minimum_required(VERSION 3.25)
+project (OpenCVCamApp)
+cmake_policy(SET CMP0074 NEW)    # respect <PACKAGE>_ROOT variables in "find_package"
+include(CMakePrintHelpers)
+#set (ENV{PYLON_ROOT} /opt/pylon)
+find_package(wxWidgets REQUIRED COMPONENTS net core base)
+find_package(pylon 7.1.0 REQUIRED)
+find_package( OpenCV REQUIRED)
+
+include(${wxWidgets_USE_FILE})
+include_directories( ${OpenCV_INCLUDE_DIRS} )
+file(GLOB sources
+        CamApp.h 
+        CamApp.cpp 
+        GUI_generated/CamAppMainFrame.h
+        GUI_generated/CamAppMainFrame.cpp
+        OpenCV/OpenCV.h
+        OpenCV/OpenCV.cpp  
+        OutputCamImages/OutputCamImages.h 
+        OutputCamImages/OutputCamImages.cpp 
+        )
+foreach(src ${sources})
+    message(${src})
+endforeach()
+add_executable(camapp ${sources} )
+target_compile_options(camapp PRIVATE -DBASLERCAM=definition)
+target_link_libraries(camapp PRIVATE ${wxWidgets_LIBRARIES}  pylon::pylon ${OpenCV_LIBS})
