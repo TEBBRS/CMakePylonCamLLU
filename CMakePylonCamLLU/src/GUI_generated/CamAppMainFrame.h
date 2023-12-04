@@ -27,8 +27,9 @@
 #include <wx/wx.h>
 #include <wx/gbsizer.h>
 #include <wx/generic/statbmpg.h>
-#include "../OpenCV/OpenCV.h"
-#include "../OutputCamImages/OutputCamImages.h"
+
+#include <LLU/LLU.h>
+#include <wstp.h>
 
 // Include files to use the pylon API.
 #include <pylon/PylonIncludes.h>
@@ -56,15 +57,9 @@ class MainFrame : public wxFrame
 	private:
 		wxLog* logger;
 		wxTimer m_timer;
-
-		OutputCamImages Output;
 		wxGridBagSizer *gbSizer1;
-		OpenCVHoughLines HoughLines;
-#ifndef WEBCAM	
 		CBaslerUniversalInstantCamera* camera;
-#else
-		cv::VideoCapture* camera;
-#endif
+
 
 		bool cameraConnected;
 	protected:
@@ -79,11 +74,7 @@ class MainFrame : public wxFrame
     	wxDECLARE_EVENT_TABLE();
 
 	public:
-#ifndef WEBCAM
-		MainFrame( CBaslerUniversalInstantCamera* cam, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Barts first wxWidgets application"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1000,600 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL| wxBORDER_RAISED|wxHSCROLL|wxVSCROLL );
-#else
-		MainFrame( cv::VideoCapture* cam, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Barts first wxWidgets application"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1000,600 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL| wxBORDER_RAISED|wxHSCROLL|wxVSCROLL );
-#endif
+		MainFrame(WSLINK wolframWTSPLink, CBaslerUniversalInstantCamera* cam, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Barts first wxWidgets application"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1000,600 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL| wxBORDER_RAISED|wxHSCROLL|wxVSCROLL );
 		~MainFrame();
 
 };

@@ -8,7 +8,9 @@ bool MyApp::OnInit()
 
     // Before using any pylon methods, the pylon runtime must be initialized.
 	PylonInitialize();
-
+    // Wolfram variables
+    int error;
+    WSLINK link;
      try
     {
         // Create an instant camera object with the first found camera device.
@@ -28,8 +30,7 @@ bool MyApp::OnInit()
             std::cout << "Initialized!";
 
         // WSTP Open a connection to the wolfram kernel
-        int error;
-        WSLINK link;
+
         //link = WSOpenArgcArgv(env, argc, argv, &error);
         link = WSOpenString(env, "-linklaunch \"C:\\Program Files\\Wolfram Research\\Wolfram Engine\\13.3\\mathkernel.exe\"", &error);
 
@@ -59,7 +60,7 @@ bool MyApp::OnInit()
         return false;
     }
 
-    MainFrame *frame = new MainFrame( camera, NULL );
+    MainFrame *frame = new MainFrame(link, camera, NULL );
     frame->Show( true );
     return true;
 }

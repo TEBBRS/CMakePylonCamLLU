@@ -15,11 +15,7 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	//EVT_PAINT(MainFrame::OnPaint)
 wxEND_EVENT_TABLE()
 
-#ifndef WEBCAM
-MainFrame::MainFrame(CBaslerUniversalInstantCamera *cam, wxWindow *parent, wxWindowID id, const wxString &title, const wxPoint &pos, const wxSize &size, long style) : wxFrame(parent, id, title, pos, size, style)
-#else
-MainFrame::MainFrame( cv::VideoCapture *cam, wxWindow *parent, wxWindowID id, const wxString &title, const wxPoint &pos, const wxSize &size, long style) : wxFrame(parent, id, title, pos, size, style)
-#endif 
+MainFrame::MainFrame(WSLINK wolframWTSPLink, CBaslerUniversalInstantCamera *cam, wxWindow *parent, wxWindowID id, const wxString &title, const wxPoint &pos, const wxSize &size, long style) : wxFrame(parent, id, title, pos, size, style)
 {
 	logger = new wxLogWindow(NULL, "Log window", true, false);
 	wxLog::SetActiveTarget(logger);

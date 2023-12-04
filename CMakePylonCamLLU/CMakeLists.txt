@@ -1,8 +1,8 @@
 ﻿# CMakeList.txt : CMake project for CMakePylonCamLLU, include source and define
 # project specific logic here.
 #
-set (LLU_ROOT "D:/VS2022/LLU/out/install/x64-Debug/cmake")
-#set  (LLU_ROOT "C:/Users/ikke/source/repos/LibraryLinkUtilities/out/install/x64-Debug")
+#set (LLU_ROOT "D:/VS2022/LLU/out/install/x64-Debug/cmake")
+set  (LLU_ROOT "C:/Users/ikke/source/repos/LibraryLinkUtilities/out/install/x64-Debug")
 #set  (wxWidgets_DIR "D:/Packages/vcpkg/packages/wxwidgets_x64-windows-static/share/wxwidgets")
 #set  (wxWidgets_DIR "D:/VS2022/wxWidgets/out/install/x64-Debug")
  set (wxWidgets_DIR $ENV{WXWIN})
@@ -12,7 +12,8 @@ set  (NanoSVG_DIR "D:/Packages/vcpkg/packages/nanosvg_x64-windows-static/share/N
 
 find_package(wxWidgets REQUIRED COMPONENTS net core base)
 set(CMAKE_FIND_DEBUG_MODE ON)
-find_package(pylon 7.3.0 REQUIRED)
+#find_package (pylon 7.3.0 REQUIRED)
+find_package  (pylon 7.4.0 REQUIRED)
 find_package(LLU NO_MODULE REQUIRED PATH_SUFFIXES LLU)
 
 include(${wxWidgets_USE_FILE})
@@ -20,10 +21,10 @@ include_directories(
         #add other includes directories 
         ${Pylon_INCLUDE_DIRS}
 )
-message ("Debug==>>" + ${Pylon_INCLUDE_DIRS})
+message ("Debug==>> ${Pylon_INCLUDE_DIRS}")
 # Add source to this project's executable.
-file (GLOB src src/*.cpp)
-file (GLOB inc src/*.h)
+file (GLOB src src/*.cpp src/GUI_generated/*.cpp)
+file (GLOB inc src/*.h   src/GUI_generated/*.h)
 #include_directories(include)
 add_executable (CMakePylonCamLLU ${src} ${inc})
 target_link_libraries(CMakePylonCamLLU PRIVATE LLU::LLU pylon::pylon)
