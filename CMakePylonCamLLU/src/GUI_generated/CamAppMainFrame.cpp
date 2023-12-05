@@ -15,7 +15,7 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	//EVT_PAINT(MainFrame::OnPaint)
 wxEND_EVENT_TABLE()
 
-MainFrame::MainFrame(WSLINK wolframWTSPLink, CBaslerUniversalInstantCamera *cam, wxWindow *parent, wxWindowID id, const wxString &title, const wxPoint &pos, const wxSize &size, long style) : wxFrame(parent, id, title, pos, size, style)
+MainFrame::MainFrame(WSLINK wolframLLULink, CBaslerUniversalInstantCamera *cam, wxWindow *parent, wxWindowID id, const wxString &title, const wxPoint &pos, const wxSize &size, long style) : wxFrame(parent, id, title, pos, size, style)
 {
 	logger = new wxLogWindow(NULL, "Log window", true, false);
 	wxLog::SetActiveTarget(logger);

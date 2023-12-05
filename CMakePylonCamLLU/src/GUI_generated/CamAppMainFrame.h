@@ -27,7 +27,7 @@
 #include <wx/wx.h>
 #include <wx/gbsizer.h>
 #include <wx/generic/statbmpg.h>
-
+#include "../OutputCamImages/OutputCamImages.h"
 #include <LLU/LLU.h>
 #include <wstp.h>
 
@@ -59,7 +59,7 @@ class MainFrame : public wxFrame
 		wxTimer m_timer;
 		wxGridBagSizer *gbSizer1;
 		CBaslerUniversalInstantCamera* camera;
-
+		OutputCamImages Output;
 
 		bool cameraConnected;
 	protected:
@@ -74,7 +74,7 @@ class MainFrame : public wxFrame
     	wxDECLARE_EVENT_TABLE();
 
 	public:
-		MainFrame(WSLINK wolframWTSPLink, CBaslerUniversalInstantCamera* cam, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Barts first wxWidgets application"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1000,600 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL| wxBORDER_RAISED|wxHSCROLL|wxVSCROLL );
+		MainFrame(WSLINK wolframLLULink, CBaslerUniversalInstantCamera* cam, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Barts first wxWidgets application"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(1000, 600), long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL | wxBORDER_RAISED | wxHSCROLL | wxVSCROLL);
 		~MainFrame();
 
 };
