@@ -44,10 +44,10 @@ using namespace Pylon;
 #include <pylon/BaslerUniversalInstantCamera.h>
 ///////////////////////////////////////////////////////////////////////////
 
-#define ID_1 1000
-#define ID_2 1001
-#define FPS 2
-#define TIMERVALUE (1000/FPS)
+constexpr int ID_1 = 1000;
+constexpr int ID_2 = 1001;
+constexpr int FPS = 2;
+constexpr int TIMERVALUE = (1000 / FPS);
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrame
@@ -75,6 +75,8 @@ class MainFrame : public wxFrame
 
 	public:
 		MainFrame(WSLINK wolframLLULink, CBaslerUniversalInstantCamera* cam, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Barts first wxWidgets application"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(1000, 600), long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL | wxBORDER_RAISED | wxHSCROLL | wxVSCROLL);
+		MainFrame(WSLINK wolframLLULink, CBaslerUniversalInstantCamera* cam, wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style) : wxFrame(parent, id, title, pos, size, style)
+
 		~MainFrame();
 
 };
