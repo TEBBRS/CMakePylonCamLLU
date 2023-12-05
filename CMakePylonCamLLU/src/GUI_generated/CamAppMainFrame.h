@@ -75,8 +75,6 @@ class MainFrame : public wxFrame
 
 	public:
 		MainFrame(WSLINK wolframLLULink, CBaslerUniversalInstantCamera* cam, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Barts first wxWidgets application"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(1000, 600), long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL | wxBORDER_RAISED | wxHSCROLL | wxVSCROLL);
-		MainFrame(WSLINK wolframLLULink, CBaslerUniversalInstantCamera* cam, wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style) : wxFrame(parent, id, title, pos, size, style)
-
 		~MainFrame();
 
 };

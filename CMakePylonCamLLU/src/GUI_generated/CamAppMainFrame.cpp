@@ -81,7 +81,6 @@ void MainFrame::OnConnect(wxCommandEvent &event)
 	else
 		wxLogMessage("MainFrame = running on different thread.");
 
-#ifndef WEBCAM
 	try
 	{
 
@@ -191,20 +190,6 @@ void MainFrame::OnConnect(wxCommandEvent &event)
 		// Error handling.
 		wxLogMessage("An exception occurred: %s", e.GetDescription());
 	}
-#else
-	try
-	{
-		if (!camera->isOpened())
-			camera->open(0);
-		cameraConnected = true;
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	
-
-#endif
 }
 
 
@@ -214,8 +199,6 @@ void MainFrame::OnTimer(wxTimerEvent &event)
 	if (cameraConnected)
 	{
 
-
-#ifndef WEBCAM
 		try
 		{
 			Pylon::CGrabResultPtr grabResult;
@@ -258,50 +241,6 @@ void MainFrame::OnTimer(wxTimerEvent &event)
 			// Error handling.
 			wxLogMessage("An exception occurred: %s", e.GetDescription());
 		}
-
-#else
-		try
-		{
-			cv::Mat grabColorResult, grabResult;
-			if (camera->read(grabColorResult))
-			{	
-				wxLogMessage("GrabOne");
-				cv::cvtColor(grabColorResult, grabResult, cv::COLOR_BGR2GRAY);
-				CPylonImage ConvertedGrabResult;
-
-				Output.CheckAndCreateOutputImage(0, grabResult);
-				Output.CheckAndCreateOutputImage(1, grabResult);
-				Output.CheckAndCreateOutputImage(2, grabResult);
-				Output.CheckAndCreateOutputImage(3, grabResult);
-
-				Output.CopyToOutputImage(0, grabResult);
-				Output.SetGenericBitmap(0);
-	
-				HoughLines.ConvertGrabToMat(grabResult);
-				HoughLines.CannyEdgeDetection();
-				HoughLines.HoughLineDetection();
-				HoughLines.HoughCircleDetection();
-
-				Output.CopyToOutputImage(1, HoughLines.EdgeDetectedImage);
-				Output.SetGenericBitmap(1);
-				Output.CopyToOutputImage(2, HoughLines.HoughLines);
-				Output.SetGenericBitmap(2);
-				Output.CopyToOutputImage(3, HoughLines.HoughCircles);
-				Output.SetGenericBitmap(3);
-
-				if (Output.getRepaintFrame())
-					gbSizer1->Layout();
-			}
-			else
-				wxLogMessage("Grab failed!");
-		}
-		catch (const GenericException &e)
-		{
-			// Error handling.
-			wxLogMessage("An exception occurred: %s", e.GetDescription());
-		}
-
-#endif
 	}
 	this->Refresh();
 	m_timer.Start(TIMERVALUE, true);
@@ -311,11 +250,7 @@ void MainFrame::OnDisconnect(wxCommandEvent &event)
 	wxLogMessage("OnDisconnect");
 	if (cameraConnected)
 	{
-#ifndef WEBCAM
 		camera->Close();
-#else
-		camera->release();
-#endif
 		// ImageFormatConvertor.Uninitialize();
 	}
 	cameraConnected = false;
