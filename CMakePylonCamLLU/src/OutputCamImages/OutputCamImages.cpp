@@ -34,30 +34,6 @@ void OutputCamImages::CheckAndCreateOutputImage(int ImgNr, Pylon::CGrabResultPtr
     }
 }
 
-void OutputCamImages::CheckAndCreateOutputImage(int ImgNr, cv::InputArray Input)
-{   rePaintFrame=false;
-    if (ImgNr >= 0 && ImgNr < MAX_OUTPUT_IMAGES)
-    {
-    
-            int w = Input.cols();
-            int h = Input.rows();
-
- 
-            if (m_bitmap[ImgNr] == nullptr)
-	        {	m_bitmap[ImgNr] = new wxBitmap(w/4, h/4, 24);
-		        rePaintFrame = true;
-	        }
-
-
-			if ((m_bitmap[ImgNr]->GetWidth()*4 != w) || (m_bitmap[ImgNr]->GetHeight()*4 != h))
-			{
-			    delete m_bitmap[ImgNr];
-				m_bitmap[ImgNr] = new wxBitmap(w/4, h/4, 24);
-				rePaintFrame = true;
-			}
-
-    }
-}
 
 
 typedef wxNativePixelData PixelData;
@@ -90,32 +66,6 @@ void OutputCamImages::CopyToOutputImage(int ImgNr, Pylon::CGrabResultPtr ptrGrab
                 }
             }
         }
-}
-void OutputCamImages::CopyToOutputImage(int ImgNr, cv::InputArray Input)
-{   
-    
-    if (ImgNr >= 0 && ImgNr < MAX_OUTPUT_IMAGES)
-        if (m_bitmap[ImgNr] != nullptr)
-        {
-            int w = m_bitmap[ImgNr]->GetWidth();
-	        int h = m_bitmap[ImgNr]->GetHeight();
-            PixelData  bmdata(*m_bitmap[ImgNr]);
-            // use raw bitmap access to write RGB data directly into the bitmap
-	        const uint8_t *pImageBuffer = Input.getMat().data;
-		    PixelData::Iterator dst(bmdata);
-
-		    for (int y = 0; y < h; y++)
-		    {
-			    for (int x = 0; x < w; x++)
-			    {	dst.MoveTo(bmdata, x, y);
-			    	uint8_t grayValue = (uint8_t) pImageBuffer[(x*4+y*w*16)];
-			    	dst.Blue() = grayValue;
-			    	dst.Green() = grayValue;
-			    	dst.Red() = grayValue;
-			    }
-            }    
-		}
-
 }
 void OutputCamImages::SetGenericBitmap(int ImgNr)
 {

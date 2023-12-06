@@ -1,7 +1,7 @@
 #include "CamApp.h"
 #include <stdio.h>
 
-wxIMPLEMENT_APP(MyApp);
+wxIMPLEMENT_APP_NO_THEMES(MyApp);
 
 bool MyApp::OnInit()
 {
@@ -39,23 +39,23 @@ bool MyApp::OnInit()
             std::cout << "Unable to create link!";
             return false;
         }
-        else
+        else 
             std::cout << "Link created!";
 
         // WSTP Activate link
-        if (!WSActivate(link))
-        {
-            std::cout << "Link not activated!";
-            return false;
-        }
-        else
+            if (!WSActivate(link))
+            {
+                std::cout << "Link not activated!";
+                return false;
+            }
+            else
             std::cout << "Link activated!";
 
     }
        catch (const GenericException &e)
     {
         // Error handling.
-        std::cerr << "An exception occurred." << std::endl
+       std::cerr << "An exception occurred." << std::endl
         << e.GetDescription() << std::endl;
         return false;
     }
@@ -71,3 +71,4 @@ MyApp::~MyApp()
     PylonTerminate();
 
 }
+

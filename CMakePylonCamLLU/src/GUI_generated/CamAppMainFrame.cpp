@@ -19,10 +19,6 @@ MainFrame::MainFrame(WSLINK wolframLLULink, CBaslerUniversalInstantCamera* cam, 
 {
 	logger = new wxLogWindow(NULL, "Log window", true, false);
 	wxLog::SetActiveTarget(logger);
-	if (wxIsMainThread)
-		wxLogMessage("MainFrame = running on main thread.");
-	else
-		wxLogMessage("MainFrame = running on different thread.");
 
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 	
@@ -76,10 +72,6 @@ MainFrame::MainFrame(WSLINK wolframLLULink, CBaslerUniversalInstantCamera* cam, 
 void MainFrame::OnConnect(wxCommandEvent &event)
 {
 	wxLogMessage("OnConnect");
-	if (wxIsMainThread)
-		wxLogMessage("MainFrame = running on main thread.");
-	else
-		wxLogMessage("MainFrame = running on different thread.");
 
 	try
 	{
@@ -218,17 +210,17 @@ void MainFrame::OnTimer(wxTimerEvent &event)
 				Output.CopyToOutputImage(0, grabResult);
 				Output.SetGenericBitmap(0);
 	
-				HoughLines.ConvertGrabToMat(grabResult);
-				HoughLines.CannyEdgeDetection();
-				HoughLines.HoughLineDetection();
-				HoughLines.HoughCircleDetection();
+				//HoughLines.ConvertGrabToMat(grabResult);
+				//HoughLines.CannyEdgeDetection();
+				//HoughLines.HoughLineDetection();
+				//HoughLines.HoughCircleDetection();
 
-				Output.CopyToOutputImage(1, HoughLines.EdgeDetectedImage);
-				Output.SetGenericBitmap(1);
-				Output.CopyToOutputImage(2, HoughLines.HoughLines);
-				Output.SetGenericBitmap(2);
-				Output.CopyToOutputImage(3, HoughLines.HoughCircles);
-				Output.SetGenericBitmap(3);
+				//Output.CopyToOutputImage(1, HoughLines.EdgeDetectedImage);
+				//Output.SetGenericBitmap(1);
+				//Output.CopyToOutputImage(2, HoughLines.HoughLines);
+				//Output.SetGenericBitmap(2);
+				//Output.CopyToOutputImage(3, HoughLines.HoughCircles);
+				//Output.SetGenericBitmap(3);
 
 				if (Output.getRepaintFrame())
 					gbSizer1->Layout();
@@ -259,6 +251,9 @@ void MainFrame::OnPaint(wxPaintEvent &event)
 {
 	wxPaintDC dc(this);
 }
+
+
+
 
 MainFrame::~MainFrame()
 { // delete decompressor;

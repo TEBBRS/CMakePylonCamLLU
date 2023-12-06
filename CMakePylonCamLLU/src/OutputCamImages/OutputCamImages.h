@@ -6,10 +6,7 @@
 #ifdef PYLON_WIN_BUILD
 #    include <pylon/PylonGUI.h>
 #endif
-#include <opencv4/opencv2/core.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
+
 
 
 class OutputCamImages
@@ -17,10 +14,10 @@ class OutputCamImages
     public:
         void Initialize(wxFrame* MainFrame);
         void CheckAndCreateOutputImage(int ImgNr, Pylon::CGrabResultPtr ptrGrabResult);
-        void CheckAndCreateOutputImage(int ImgNr, cv::InputArray CalculatedResult);
+        //void CheckAndCreateOutputImage(int ImgNr, cv::InputArray CalculatedResult);
         
         void CopyToOutputImage(int ImgNr, Pylon::CGrabResultPtr ptrGrabResult);
-        void CopyToOutputImage(int ImgNr, cv::InputArray CalculatedResult);
+        //void CopyToOutputImage(int ImgNr, cv::InputArray CalculatedResult);
 
         void SetGenericBitmap(int ImgNr);
         bool getRepaintFrame();
