@@ -11,13 +11,14 @@ Camera::Camera()
         camera = new Pylon::CBaslerUniversalInstantCamera(Pylon::CTlFactory::GetInstance().CreateFirstDevice());
 
         // Print the model name of the camera.
-        //wxLogMessage("Using device %s", camera->GetDeviceInfo().GetModelName());
+        wxLogMessage("Using device %s", camera->GetDeviceInfo().GetModelName().c_str());
         cameraFoundAndInitialised = true;
     }
     catch (const Pylon::GenericException& e)
     {
         // Error handling.
-        //wxLogMessage ("An exception occurred: %s", e.GetDescription());
+		const char* message = e.GetDescription();
+        wxLogMessage ("An exception occurred: %s", message);
         cameraFoundAndInitialised = false;
     }
 	cameraConnected = false;
@@ -120,7 +121,8 @@ void Camera::Open()
 	catch (const Pylon::GenericException& e)
 	{
 		// Error handling.
-		//wxLogMessage("An exception occurred: %s", e.GetDescription());
+		const char* message = e.GetDescription();
+		wxLogMessage("An exception occurred: %s", message);
 	}
 
 }
@@ -135,7 +137,8 @@ Pylon::CGrabResultPtr Camera::GrabOne()
 	catch (const Pylon::GenericException& e)
 	{
 		// Error handling.
-		//wxLogMessage("An exception occurred: %s", e.GetDescription());
+		const char* message = e.GetDescription();
+		wxLogMessage("An exception occurred: %s", message);
 		return empty;
 	}
 

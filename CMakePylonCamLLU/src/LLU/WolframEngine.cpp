@@ -4,7 +4,7 @@ WolframEngine::WolframEngine()
 {
 
 	// WSTP Initialise
-	WSENV env = WSInitialize((char*)0);
+	env = WSInitialize((char*)0);
 	if (env == (WSENV)0)
 	{
 		wxLogMessage("Wolfram Engine communication unable to initialize!");
@@ -42,5 +42,6 @@ WolframEngine::WolframEngine()
 }
 WolframEngine::~WolframEngine()
 {
-	
+	WSClose(link);
+	WSDeinitialize(env);
 }

@@ -10,5 +10,6 @@ class WolframEngine
 	private:
 		int error;
 		WSLINK link;
+		WSENV env;
 		bool Initialised;
 };
