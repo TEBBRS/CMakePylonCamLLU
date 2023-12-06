@@ -6,6 +6,7 @@ class WolframEngine
 {
 	public:
 		WolframEngine();
+		void CreateImage();
 		~WolframEngine();
 	private:
 		int error;

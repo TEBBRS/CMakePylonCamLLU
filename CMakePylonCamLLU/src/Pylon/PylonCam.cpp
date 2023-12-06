@@ -32,12 +32,12 @@ void Camera::Open()
 		{
 			// Open the camera for accessing the parameters.
 			camera->Open();
-			camera->TestImageSelector.SetValue(Basler_UniversalCameraParams::TestImageSelectorEnums::TestImageSelector_Off);
+			//camera->TestImageSelector.SetValue(Basler_UniversalCameraParams::TestImageSelectorEnums::TestImageSelector_GreyHorizontalRamp);
 			wxLogMessage("GrabOne");
 			Pylon::CGrabResultPtr grabResult;
 			camera->PixelFormat.SetValue("Mono8");
 			camera->GevSCPD.SetValue(10000);
-			camera->GainRaw.SetValue(90);
+			//camera->GainRaw.SetValue(90);
 			camera->GrabOne(1000, grabResult);
 
 			cameraConnected = true;

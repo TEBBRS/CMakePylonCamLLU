@@ -40,6 +40,10 @@ WolframEngine::WolframEngine()
 	}
 
 }
+void WolframEngine::CreateImage()
+{
+
+}
 WolframEngine::~WolframEngine()
 {
 	WSClose(link);

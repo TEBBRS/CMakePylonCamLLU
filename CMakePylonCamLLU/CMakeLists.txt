@@ -1,12 +1,12 @@
 ﻿# CMakeList.txt : CMake project for CMakePylonCamLLU, include source and define
 # project specific logic here.
 #
-set (LLU_ROOT "D:/VS2022/LLU/out/install/x64-Debug/cmake")
-#set  (LLU_ROOT "C:/Users/ikke/source/repos/LibraryLinkUtilities/out/install/x64-Debug")
+#set (LLU_ROOT "D:/VS2022/LLU/out/install/x64-Debug/cmake")
+set  (LLU_ROOT "C:/Users/ikke/source/repos/LibraryLinkUtilities/out/install/x64-Debug")
 #set  (wxWidgets_DIR "D:/Packages/vcpkg/packages/wxwidgets_x64-windows-static/share/wxwidgets")
 #set  (wxWidgets_DIR "D:/VS2022/wxWidgets/out/install/x64-Debug")
  set (wxWidgets_DIR $ENV{WXWIN})
-set  (NanoSVG_DIR "D:/Packages/vcpkg/packages/nanosvg_x64-windows-static/share/NanoSVG")
+#set  (NanoSVG_DIR "D:/Packages/vcpkg/packages/nanosvg_x64-windows-static/share/NanoSVG")
 #set  (Pylon_DIR "C:/Program Files/Basler/pylon 7/Development/CMake/pylon")
 #set (CMAKE_MODULE_PATH "D:/VS2022/CMakePylonCamLLU/CMakePylonCamLLU")
 

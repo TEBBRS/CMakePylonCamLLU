@@ -81,6 +81,8 @@ void MainFrame::OnConnect(wxCommandEvent &event)
 }
 void MainFrame::OnQuit(wxCommandEvent& event)
 {
+	if (camera->Connected())
+		camera->Disconnect();
 	wxLogMessage("OnQuit");
 	wxExit();
 }
@@ -145,6 +147,6 @@ MainFrame::~MainFrame()
 { // delete decompressor;
 	delete engine;
 	delete camera;
-	wxLog::SetActiveTarget(nullptr);
+	wxLog::SetActiveTarget(NULL);
 	delete logger;
 }
