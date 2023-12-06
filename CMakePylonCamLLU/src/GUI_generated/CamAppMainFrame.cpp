@@ -11,6 +11,7 @@
 wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(ID_1, MainFrame::OnConnect)
 	EVT_MENU(ID_2, MainFrame::OnDisconnect)
+	EVT_MENU(ID_3, MainFrame::OnQuit)
 	EVT_TIMER(wxID_ANY, MainFrame::OnTimer)
 	//EVT_PAINT(MainFrame::OnPaint)
 wxEND_EVENT_TABLE()
@@ -35,6 +36,10 @@ MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, con
 	wxMenuItem *m_Disconnect;
 	m_Disconnect = new wxMenuItem(m_MainMenu, ID_2, wxString(wxT("Disconnect from camera")), wxEmptyString, wxITEM_NORMAL);
 	m_MainMenu->Append(m_Disconnect);
+
+	wxMenuItem* m_Quit;
+	m_Quit = new wxMenuItem(m_MainMenu, ID_3, wxString(wxT("Quit the application")), wxEmptyString, wxITEM_NORMAL);
+	m_MainMenu->Append(m_Quit);
 
 	m_MainMenuBar->Append(m_MainMenu, wxT("MainMenu"));
 
@@ -73,6 +78,11 @@ void MainFrame::OnConnect(wxCommandEvent &event)
 {
 	wxLogMessage("OnConnect");
 	camera->Open();
+}
+void MainFrame::OnQuit(wxCommandEvent& event)
+{
+	wxLogMessage("OnQuit");
+	wxExit();
 }
 
 
