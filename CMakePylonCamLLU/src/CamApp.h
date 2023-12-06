@@ -6,16 +6,12 @@
 #endif
 #include "GUI_generated/CamAppMainFrame.h"
 // Include files to use the pylon API.
-#include <pylon/PylonIncludes.h>
-#include <pylon/BaslerUniversalInstantCamera.h>
-#include <LLU/LLU.h>
-#include "wstp.h"
+
+
 
 class MyApp: public wxApp
 {
 public:
     virtual bool OnInit();
     ~MyApp();
-private:
-    CBaslerUniversalInstantCamera* camera;
 };

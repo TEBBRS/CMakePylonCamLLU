@@ -28,17 +28,8 @@
 #include <wx/gbsizer.h>
 #include <wx/generic/statbmpg.h>
 #include "../OutputCamImages/OutputCamImages.h"
-#include <LLU/LLU.h>
-#include <wstp.h>
-
-// Include files to use the pylon API.
-#include <pylon/PylonIncludes.h>
-#ifdef PYLON_WIN_BUILD
-#    include <pylon/PylonGUI.h>
-#endif
-
-// Namespace for using pylon objects.
-using namespace Pylon;
+#include "../Pylon/PylonCam.h"
+#include "../LLU/WolframEngine.h"
 
 // Settings to use any camera type.
 #include <pylon/BaslerUniversalInstantCamera.h>
@@ -58,10 +49,12 @@ class MainFrame : public wxFrame
 		wxLog* logger;
 		wxTimer m_timer;
 		wxGridBagSizer *gbSizer1;
-		CBaslerUniversalInstantCamera* camera;
+		Camera* camera;
+		WolframEngine* engine;
 		OutputCamImages Output;
 
 		bool cameraConnected;
+
 	protected:
 		wxMenuBar* m_MainMenuBar;
 		wxMenu* m_MainMenu;
@@ -71,10 +64,10 @@ class MainFrame : public wxFrame
     	void OnDisconnect(wxCommandEvent& event);
 		void OnTimer(wxTimerEvent& event);
 		void OnPaint(wxPaintEvent &event);
-    	wxDECLARE_EVENT_TABLE();
+		wxDECLARE_EVENT_TABLE();
 
 	public:
-		MainFrame(WSLINK wolframLLULink, CBaslerUniversalInstantCamera* cam, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Barts first wxWidgets application"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(1000, 600), long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL | wxBORDER_RAISED | wxHSCROLL | wxVSCROLL);
+		MainFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Barts first wxWidgets application"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(1000, 600), long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL | wxBORDER_RAISED | wxHSCROLL | wxVSCROLL);
 		~MainFrame();
 
 };

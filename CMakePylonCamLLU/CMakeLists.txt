@@ -29,7 +29,12 @@ file (GLOB sources
             src/GUI_generated/CamAppMainFrame.h
             src/GUI_generated/CamAppMainFrame.cpp
             src/OutputCamImages/OutputCamImages.h
-            src/OutputCamImages/OutputCamImages.cpp)
+            src/OutputCamImages/OutputCamImages.cpp
+            src/Pylon/PylonCam.h 
+            src/Pylon/PylonCam.cpp 
+            src/LLU/WolframEngine.h 
+            src/LLU/WolframENgine.cpp
+            )
 #include_directories(include)
 add_executable (CMakePylonCamLLU WIN32 ${sources})
 target_link_libraries(CMakePylonCamLLU PRIVATE LLU::LLU ${wxWidgets_LIBRARIES} pylon::pylon)
