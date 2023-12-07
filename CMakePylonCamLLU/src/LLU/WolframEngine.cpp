@@ -40,9 +40,13 @@ WolframEngine::WolframEngine()
 	}
 
 }
-void WolframEngine::CreateImage()
+void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 {
-
+	// use raw bitmap access to write MONO8 data directly into the bitmap
+	const uint8_t* pImageBuffer = (uint8_t*)ptrGrabResult->GetBuffer();
+	const std::vector<uint32_t> dimensions{ ptrGrabResult->GetHeight(), ptrGrabResult->GetHeight() };
+	LLU::MArrayDimensions imageDimensions(dimensions);
+	LLU::NumericArray<unsigned char> imageData();
 }
 WolframEngine::~WolframEngine()
 {

@@ -1,12 +1,13 @@
 #include <wx/log.h>
 #include <LLU/LLU.h>
 #include "wstp.h"
+#include <pylon/PylonIncludes.h>
 
 class WolframEngine
 {
 	public:
 		WolframEngine();
-		void CreateImage();
+		void CreateImage(Pylon::CGrabResultPtr ptrGrabResult);
 		~WolframEngine();
 	private:
 		int error;
