@@ -33,7 +33,9 @@ file (GLOB sources
             src/Pylon/PylonCam.h 
             src/Pylon/PylonCam.cpp 
             src/LLU/WolframEngine.h 
-            src/LLU/WolframENgine.cpp
+            src/LLU/WolframENgine.cpp 
+            src/Utils/ItCGrabResultPtr.h 
+            src/Utils/ItCGrabResultPtr.cpp 
             )
 #include_directories(include)
 add_executable (CMakePylonCamLLU WIN32 ${sources})

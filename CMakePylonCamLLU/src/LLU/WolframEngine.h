@@ -1,6 +1,7 @@
 #include <wx/log.h>
 #include <LLU/LLU.h>
 #include "wstp.h"
+#include "../Utils/ItCGrabResulPtr.h"
 #include <pylon/PylonIncludes.h>
 
 class WolframEngine
@@ -14,4 +15,5 @@ class WolframEngine
 		WSLINK link;
 		WSENV env;
 		bool Initialised;
+		LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>* ptrStreamObject;
 };

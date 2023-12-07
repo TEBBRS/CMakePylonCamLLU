@@ -37,19 +37,23 @@ WolframEngine::WolframEngine()
 	{
 		wxLogMessage("Wolfram Engine communication link activated!");
 		Initialised = true;
+		ptrStreamObject = new LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>(link);
 	}
 
 }
 void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 {
 	// use raw bitmap access to write MONO8 data directly into the bitmap
-	const uint8_t* pImageBuffer = (uint8_t*)ptrGrabResult->GetBuffer();
+	ItCGrabResultPtr ItPtr(ptrGrabResult);
 	const std::vector<uint32_t> dimensions{ ptrGrabResult->GetHeight(), ptrGrabResult->GetHeight() };
 	LLU::MArrayDimensions imageDimensions(dimensions);
-	LLU::NumericArray<unsigned char> imageData();
+	LLU::NumericArray<uint8_t> imageData(ItPtr.begin(), ItPtr.end(),imageDimensions);
+	LLU::WS::ArrayData<uint8_t> test(imageData);
+	ptrStreamObject << imageData;
 }
 WolframEngine::~WolframEngine()
 {
+	delete ptrStreamObject;
 	WSClose(link);
 	WSDeinitialize(env);
 }
