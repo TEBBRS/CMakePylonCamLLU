@@ -82,6 +82,7 @@ void MainFrame::OnConnect(wxCommandEvent &event)
 }
 void MainFrame::OnQuit(wxCommandEvent& event)
 {
+	QuitActive = true;
 	if (camera->Connected())
 		camera->Disconnect();
 	wxLogMessage("OnQuit");
@@ -136,7 +137,8 @@ void MainFrame::OnTimer(wxTimerEvent &event)
 				wxLogMessage("Grab failed!");
 	}
 	this->Refresh();
-	m_timer.Start(TIMERVALUE, true);
+	if (!QuitActive)
+		m_timer.Start(TIMERVALUE, true);
 }
 void MainFrame::OnDisconnect(wxCommandEvent &event)
 {

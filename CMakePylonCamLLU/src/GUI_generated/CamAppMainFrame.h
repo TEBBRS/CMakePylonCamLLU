@@ -54,7 +54,7 @@ class MainFrame : public wxFrame
 		Camera* camera;
 		WolframEngine* engine;
 		OutputCamImages Output;
-
+		bool QuitActive = false;
 		bool cameraConnected;
 
 	protected:
