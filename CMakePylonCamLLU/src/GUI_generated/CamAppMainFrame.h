@@ -20,7 +20,7 @@
 #include <wx/stattext.h>
 #include <wx/sizer.h>
 #include <wx/frame.h>
-
+#include <wx/event.h>
 #include <wx/log.h>
 #include <wx/timer.h>
 #include <wx/rawbmp.h>
@@ -38,6 +38,7 @@
 constexpr int ID_1 = 1000;
 constexpr int ID_2 = 1001;
 constexpr int ID_3 = 1002;
+constexpr int ID_4 = 1003;
 constexpr int FPS = 2;
 constexpr int TIMERVALUE = (1000 / FPS);
 
@@ -65,7 +66,8 @@ class MainFrame : public wxFrame
     	void OnDisconnect(wxCommandEvent& event);
 		void OnQuit(wxCommandEvent& event);
 		void OnTimer(wxTimerEvent& event);
-		void OnPaint(wxPaintEvent &event);
+		void OnPaint(wxPaintEvent& event);
+		//void OnScroll(wxScrollEvent& event);
 		wxDECLARE_EVENT_TABLE();
 
 	public:

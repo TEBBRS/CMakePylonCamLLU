@@ -48,10 +48,13 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 	const std::vector<uint32_t> dimensions{ ptrGrabResult->GetHeight(), ptrGrabResult->GetHeight() };
 	LLU::MArrayDimensions imageDimensions(dimensions);
 	LLU::NumericArray<uint8_t> imageData(ItPtr.begin(), ItPtr.end(),imageDimensions);
-	std::unique_ptr<uint8_t, std::default_delete<uint8_t>> ptrImage((uint8_t*)ptrGrabResult->GetBuffer());
 	LLU::WS::ReleaseArray<uint8_t> destructor();
-	LLU::WS::ArrayData<uint8_t, > test(ptrImage);
-	ptrStreamObject << test;
+	std::allocator<uint8_t> allocator();
+	std::unique_ptr<uint8_t> ptrImage((uint8_t*)ptrGrabResult->GetBuffer());
+	LLU::WS::ReleaseArray<uint8_t> release();
+	LLU::WS::ArrayData<uint8_t> bart((uint8_t *) ptrGrabResult->GetBuffer());
+	const std::vector<uint8_t, std::allocator<uint8_t>> test(ItPtr.begin(), ItPtr.end());
+	*ptrStreamObject << bart;
 }
 WolframEngine::~WolframEngine()
 {
