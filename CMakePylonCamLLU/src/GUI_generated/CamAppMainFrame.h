@@ -71,7 +71,7 @@ class MainFrame : public wxFrame
 		wxDECLARE_EVENT_TABLE();
 
 	public:
-		MainFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Barts first wxWidgets application"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(1000, 600), long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL | wxBORDER_RAISED | wxHSCROLL | wxVSCROLL);
+		MainFrame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Barts first wxWidgets application"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(1000, 600), long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL | wxHSCROLL | wxVSCROLL);
 		~MainFrame();
 
 };

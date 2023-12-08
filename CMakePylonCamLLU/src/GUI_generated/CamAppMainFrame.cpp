@@ -64,7 +64,7 @@ MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, con
 	gbSizer1->Add( Output.getGenBitmap(5), wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	gbSizer1->Add( Output.getGenBitmap(6), wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	gbSizer1->Add( Output.getGenBitmap(7), wxGBPosition( 4, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
-	SetScrollbar(wxVERTICAL, 0, 16, 50);;
+	//SetScrollbar(wxVERTICAL, 0, 16, 50);;
 	this->SetSizer(gbSizer1);
 	this->Layout();
 
@@ -85,6 +85,9 @@ void MainFrame::OnQuit(wxCommandEvent& event)
 	if (camera->Connected())
 		camera->Disconnect();
 	wxLogMessage("OnQuit");
+	logger->Flush();
+	logger->Suspend();
+	wxLog::SetActiveTarget(NULL);
 	wxExit();
 }
 /*
@@ -145,13 +148,9 @@ void MainFrame::OnPaint(wxPaintEvent &event)
 	wxPaintDC dc(this);
 }
 
-
-
-
 MainFrame::~MainFrame()
 { // delete decompressor;
 	delete engine;
 	delete camera;
-	wxLog::SetActiveTarget(NULL);
 	delete logger;
 }
