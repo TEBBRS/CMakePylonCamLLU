@@ -45,16 +45,16 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 {
 	// use raw bitmap access to write MONO8 data directly into the bitmap
 	ItCGrabResultPtr ItPtr(ptrGrabResult);
-	const std::vector<uint32_t> dimensions{ ptrGrabResult->GetHeight(), ptrGrabResult->GetHeight() };
-	LLU::MArrayDimensions imageDimensions(dimensions);
-	LLU::NumericArray<uint8_t> imageData(ItPtr.begin(), ItPtr.end(),imageDimensions);
-	LLU::WS::ReleaseArray<uint8_t> destructor();
-	std::allocator<uint8_t> allocator();
-	std::unique_ptr<uint8_t> ptrImage((uint8_t*)ptrGrabResult->GetBuffer());
-	LLU::WS::ReleaseArray<uint8_t> release();
-	LLU::WS::ArrayData<uint8_t> bart((uint8_t *) ptrGrabResult->GetBuffer());
-	const std::vector<uint8_t, std::allocator<uint8_t>> test(ItPtr.begin(), ItPtr.end());
-	*ptrStreamObject << bart;
+	LLU:colorspace_t cs(MImage_CS_Type::MImage_CS_Gray);
+	LLU::Image<uint8_t> image(ptrGrabResult->GetWidth(), ptrGrabResult->GetHeight(), 1, cs, true);
+	uint8_t* ptr = (uint8_t *) image.rawData();
+
+	for (auto it = ItPtr.begin(); it != ItPtr.end(); it++)
+	{
+		*ptr = *it;
+		ptr++;
+	}
+	*ptrStreamObject << image;
 }
 WolframEngine::~WolframEngine()
 {
