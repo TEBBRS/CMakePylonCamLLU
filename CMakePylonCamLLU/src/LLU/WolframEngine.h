@@ -17,4 +17,5 @@ class WolframEngine
 		bool Initialised;
 		LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>* pStreamObject;
 		LLU::Image<uint8_t>* pImage=nullptr;
+		WolframLibraryData libData;
 };

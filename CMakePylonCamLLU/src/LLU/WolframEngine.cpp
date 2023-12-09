@@ -35,6 +35,9 @@ WolframEngine::WolframEngine()
 	}
 	else
 	{
+
+		int WolframLibrary_initialize();
+		LLU::LibraryData::setLibraryData(libData);
 		wxLogMessage("Wolfram Engine communication link activated!");
 		Initialised = true;
 		pStreamObject = new LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>(link);
