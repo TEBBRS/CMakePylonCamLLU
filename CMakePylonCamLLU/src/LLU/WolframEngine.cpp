@@ -37,7 +37,7 @@ WolframEngine::WolframEngine()
 	{
 		wxLogMessage("Wolfram Engine communication link activated!");
 		Initialised = true;
-		ptrStreamObject = new LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>(link);
+		pStreamObject = new LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>(link);
 	}
 
 }
@@ -46,19 +46,21 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 	// use raw bitmap access to write MONO8 data directly into the bitmap
 	ItCGrabResultPtr ItPtr(ptrGrabResult);
 	LLU:colorspace_t cs(MImage_CS_Type::MImage_CS_Gray);
-	LLU::Image<uint8_t> image(ptrGrabResult->GetWidth(), ptrGrabResult->GetHeight(), 1, cs, true);
-	uint8_t* ptr = (uint8_t *) image.rawData();
+	pImage=new LLU::Image<uint8_t>(ptrGrabResult->GetWidth(), ptrGrabResult->GetHeight(), 1, cs, true);
+	uint8_t* ptr = (uint8_t *) pImage->rawData();
 
 	for (auto it = ItPtr.begin(); it != ItPtr.end(); it++)
 	{
 		*ptr = *it;
 		ptr++;
 	}
-	*ptrStreamObject << image;
+	//*ptrStreamObject << image;
 }
 WolframEngine::~WolframEngine()
 {
-	delete ptrStreamObject;
+	if (pImage != nullptr)
+		delete pImage;
+	delete pStreamObject;
 	WSClose(link);
 	WSDeinitialize(env);
 }

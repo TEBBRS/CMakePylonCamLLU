@@ -22,6 +22,7 @@
 #include <wx/frame.h>
 #include <wx/event.h>
 #include <wx/log.h>
+#include <wx/button.h>
 #include <wx/timer.h>
 #include <wx/rawbmp.h>
 #include <wx/wx.h>
@@ -39,6 +40,7 @@ constexpr int ID_1 = 1000;
 constexpr int ID_2 = 1001;
 constexpr int ID_3 = 1002;
 constexpr int ID_4 = 1003;
+constexpr int ID_5 = 1004;
 constexpr int FPS = 2;
 constexpr int TIMERVALUE = (1000 / FPS);
 
@@ -55,8 +57,8 @@ class MainFrame : public wxFrame
 		WolframEngine* engine;
 		OutputCamImages Output;
 		bool QuitActive = false;
-		bool cameraConnected;
-
+		bool cameraConnected=false;
+		bool buttonPressed = false;
 	protected:
 		wxMenuBar* m_MainMenuBar;
 		wxMenu* m_MainMenu;
@@ -67,6 +69,7 @@ class MainFrame : public wxFrame
 		void OnQuit(wxCommandEvent& event);
 		void OnTimer(wxTimerEvent& event);
 		void OnPaint(wxPaintEvent& event);
+		void OnCreateImage(wxCommandEvent& event);
 		//void OnScroll(wxScrollEvent& event);
 		wxDECLARE_EVENT_TABLE();
 

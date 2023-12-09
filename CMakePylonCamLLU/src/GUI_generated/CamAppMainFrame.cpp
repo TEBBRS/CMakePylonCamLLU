@@ -12,6 +12,7 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
 	EVT_MENU(ID_1, MainFrame::OnConnect)
 	EVT_MENU(ID_2, MainFrame::OnDisconnect)
 	EVT_MENU(ID_3, MainFrame::OnQuit)
+	EVT_BUTTON(ID_4, MainFrame::OnCreateImage)
 	EVT_TIMER(wxID_ANY, MainFrame::OnTimer)
 	//EVT_COMMAND_SCROLL(ID_4, MainFrame::OnScroll)
 	//EVT_PAINT(MainFrame::OnPaint)
@@ -56,14 +57,19 @@ MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, con
 	m_Header->Wrap(-1);
 	gbSizer1->Add( m_Header, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	gbSizer1->Add( Output.getGenBitmap(0), wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
-	gbSizer1->Add( Output.getGenBitmap(1), wxGBPosition( 1, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
-	gbSizer1->Add( Output.getGenBitmap(2), wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
-	gbSizer1->Add( Output.getGenBitmap(3), wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
-	gbSizer1->Add( Output.getGenBitmap(4), wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
-	gbSizer1->Add( Output.getGenBitmap(5), wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
-	gbSizer1->Add( Output.getGenBitmap(6), wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
-	gbSizer1->Add( Output.getGenBitmap(7), wxGBPosition( 4, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	wxButton* m_button1 = new wxButton(this, ID_4, wxT("CopyImageToWolfram"), wxDefaultPosition, wxDefaultSize, 0);
+	// Connect Events
+	//m_button1->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MainFrame::OnCreateImage), NULL, this);
+
+	gbSizer1->Add(m_button1, wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL, 5);
+	gbSizer1->Add( Output.getGenBitmap(0), wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	gbSizer1->Add( Output.getGenBitmap(1), wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	gbSizer1->Add( Output.getGenBitmap(2), wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	gbSizer1->Add( Output.getGenBitmap(3), wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	gbSizer1->Add( Output.getGenBitmap(4), wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	gbSizer1->Add( Output.getGenBitmap(5), wxGBPosition( 4, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	gbSizer1->Add( Output.getGenBitmap(6), wxGBPosition( 5, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	gbSizer1->Add( Output.getGenBitmap(7), wxGBPosition( 5, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	//SetScrollbar(wxVERTICAL, 0, 16, 50);;
 	this->SetSizer(gbSizer1);
 	this->Layout();
@@ -74,6 +80,12 @@ MainFrame::MainFrame(wxWindow *parent, wxWindowID id, const wxString &title, con
 	m_timer.SetOwner(this);
 	m_timer.Start(TIMERVALUE, true);
 	cameraConnected = false;
+}
+void MainFrame::OnCreateImage(wxCommandEvent & event)
+{
+	wxLogMessage("Button pressed!");
+	if (camera->Connected())
+		buttonPressed = true;
 }
 void MainFrame::OnConnect(wxCommandEvent &event)
 {
@@ -107,6 +119,13 @@ void MainFrame::OnTimer(wxTimerEvent &event)
 		if (grabResult.IsValid())
 			if (grabResult->GrabSucceeded())
 			{	bool rePaintFrame=false;
+
+				if (buttonPressed)
+				{
+
+					engine->CreateImage(grabResult);
+					buttonPressed = false;
+				}
 				int w = grabResult->GetWidth();
 				int h = grabResult->GetHeight();
 				Pylon::EPixelType p = grabResult->GetPixelType();

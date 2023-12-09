@@ -15,5 +15,6 @@ class WolframEngine
 		WSLINK link;
 		WSENV env;
 		bool Initialised;
-		LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>* ptrStreamObject;
+		LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>* pStreamObject;
+		LLU::Image<uint8_t>* pImage=nullptr;
 };
