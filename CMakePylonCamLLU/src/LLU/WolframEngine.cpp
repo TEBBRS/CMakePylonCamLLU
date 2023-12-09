@@ -45,15 +45,25 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 {
 	// use raw bitmap access to write MONO8 data directly into the bitmap
 	ItCGrabResultPtr ItPtr(ptrGrabResult);
-	LLU:colorspace_t cs(MImage_CS_Type::MImage_CS_Gray);
-	pImage=new LLU::Image<uint8_t>(ptrGrabResult->GetWidth(), ptrGrabResult->GetHeight(), 1, cs, true);
-	uint8_t* ptr = (uint8_t *) pImage->rawData();
-
+	//LLU:colorspace_t cs(MImage_CS_Type::MImage_CS_Gray);
+	
+	mint w = (mint) ptrGrabResult->GetWidth();
+	mint h = (mint) ptrGrabResult->GetHeight();
+	try
+	{
+		pImage = new LLU::Image<uint8_t>(w, h, 1, colorspace_t::MImage_CS_Automatic, false);
+	}
+	catch (LLU::LibraryLinkError e)
+	{
+		wxLogMessage("%s", e.message());
+	}
+	//uint8_t* ptr = (uint8_t *) pImage->rawData();
+	/*
 	for (auto it = ItPtr.begin(); it != ItPtr.end(); it++)
 	{
 		*ptr = *it;
 		ptr++;
-	}
+	}*/
 	//*ptrStreamObject << image;
 }
 WolframEngine::~WolframEngine()
