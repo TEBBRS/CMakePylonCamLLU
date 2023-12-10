@@ -17,5 +17,7 @@ class WolframEngine
 		bool Initialised;
 		LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>* pStreamObject;
 		LLU::Image<uint8_t>* pImage=nullptr;
-		WolframLibraryData libData;
+		WolframLibraryData* libData;
+		LLU::MContainer<LLU::MArgumentType::Image, LLU::Image<uint8_t>> container();
+		//LLU::IterableContainer<LLU::Image<uint8_t>> container;
 };

@@ -37,7 +37,8 @@ WolframEngine::WolframEngine()
 	{
 
 		int WolframLibrary_initialize();
-		LLU::LibraryData::setLibraryData(libData);
+		libData = new WolframLibraryData();
+		LLU::LibraryData::setLibraryData(*libData);
 		wxLogMessage("Wolfram Engine communication link activated!");
 		Initialised = true;
 		pStreamObject = new LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>(link);
@@ -54,7 +55,7 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 	mint h = (mint) ptrGrabResult->GetHeight();
 	try
 	{
-		pImage = new LLU::Image<uint8_t>(w, h, 1, colorspace_t::MImage_CS_Automatic, false);
+		pImage = new LLU::Image<uint8_t>(w, h, 1, colorspace_t::MImage_CS_Gray, false);
 	}
 	catch (LLU::LibraryLinkError e)
 	{
