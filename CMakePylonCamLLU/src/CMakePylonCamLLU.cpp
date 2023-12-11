@@ -46,11 +46,26 @@ int main(int argc, char* argv[])
 
 	while (true)
 	{
+
 		try
 		{
-			LLU::Image<uint8_t> bart(100, 100, 1, colorspace_t::MImage_CS_Gray, false);
+			std::initializer_list<mint> d = { 100,100 };
+			LLU::MArrayDimensions dim(d);
+			LLU::NumericArray<uint8_t> image(0, dim);
+			/*uint8_t* ptr = (uint8_t*)pImage->rawData();
+
+			for (auto it = ItPtr.begin(); it != ItPtr.end(); it++)
+			{
+				*ptr = *it;
+				ptr++;
+			}
+			*pStreamObject << LLU::WS::Function("test =  Image[]", 1) << *pImage;*/
 		}
-		catch (LLU:)
+		catch (LLU::LibraryLinkError e)
+		{
+			std::cout << e.message() << std::endl;
+		}
+
 		// Wait for the prompt In[1]:=
 
 		string inputNameString;
