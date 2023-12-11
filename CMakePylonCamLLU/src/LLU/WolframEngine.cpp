@@ -1,5 +1,7 @@
 #include "WolframEngine.h"
 
+EXTERN_C DLLEXPORT int WolframLibrary_initialize(WolframLibraryData libData) { LLU::LibraryData::setLibraryData(libData); return 0; }
+
 WolframEngine::WolframEngine()
 {
 
@@ -35,10 +37,6 @@ WolframEngine::WolframEngine()
 	}
 	else
 	{
-
-		int WolframLibrary_initialize();
-		libData = new WolframLibraryData();
-		LLU::LibraryData::setLibraryData(*libData);
 		wxLogMessage("Wolfram Engine communication link activated!");
 		Initialised = true;
 		pStreamObject = new LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>(link);
@@ -56,19 +54,20 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 	try
 	{
 		pImage = new LLU::Image<uint8_t>(w, h, 1, colorspace_t::MImage_CS_Gray, false);
+		uint8_t* ptr = (uint8_t*)pImage->rawData();
+
+		for (auto it = ItPtr.begin(); it != ItPtr.end(); it++)
+		{
+			*ptr = *it;
+			ptr++;
+		}
+		*pStreamObject << LLU::WS::Function("test =  Image[]", 1) << *pImage;
 	}
 	catch (LLU::LibraryLinkError e)
 	{
 		wxLogMessage("%s", e.message());
 	}
-	//uint8_t* ptr = (uint8_t *) pImage->rawData();
-	/*
-	for (auto it = ItPtr.begin(); it != ItPtr.end(); it++)
-	{
-		*ptr = *it;
-		ptr++;
-	}*/
-	//*ptrStreamObject << image;
+	//
 }
 WolframEngine::~WolframEngine()
 {
