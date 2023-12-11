@@ -46,7 +46,11 @@ int main(int argc, char* argv[])
 
 	while (true)
 	{
-		LLU::Image<uint8_t> test1(100, 100, 1, LLU::M)
+		try
+		{
+			LLU::Image<uint8_t> bart(100, 100, 1, colorspace_t::MImage_CS_Gray, false);
+		}
+		catch (LLU:)
 		// Wait for the prompt In[1]:=
 
 		string inputNameString;
