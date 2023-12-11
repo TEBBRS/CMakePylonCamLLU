@@ -76,13 +76,9 @@ int main(int argc, char* argv[])
 			string inputTextString;
 			std::cin >> inputTextString;
 			//std::cout << "Add Integrate[x, {x, 0, 10}] to the stream" << std::endl;
-			LLU::Image<uint8_t> image(3, 3, 1, )
-			test.
-			std::unique_ptr<std::array<std::array<uint8_t, 3>, 3>> test1(test);
-
-			LLU::WS::Function enterTextFunction("Plus", 2);
-			test << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image[]",1) << test;
-
+			LLU::WS::Function enterTextFunction("Image", 1);
+			//test << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image", 1) << "{{ 255, 0, 255}, { 0, 255, 0}, {255, 0, 255}}}";
+			test << LLU::WS::Function("EnterTextPacket", 1) << inputTextString;
 		}
 
 	}
