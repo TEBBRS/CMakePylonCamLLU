@@ -56,6 +56,7 @@ WolframEngine::State WolframEngine::PollEngine()
 void WolframEngine::CheckInput()
 {
 	std::string args;
+	LLU::WS::Function ReturnExpressionFunction;
 	LLU::WS::Function inputPacketFunction;
 	*pStreamObject >> inputPacketFunction;
 	std::string Head = inputPacketFunction.getHead();
@@ -63,8 +64,24 @@ void WolframEngine::CheckInput()
 	wxLogMessage ("-->> Packet received from wolfram -->> head: %s Arguments : %i", Head, ArgCount);
 	for (int i = 0; i < ArgCount; i++)
 		{
-			*pStreamObject >> args;
-			wxLogMessage("Arguments: %s", args);
+			if (Head == "ReturnExpressionPacket")
+			{
+				*pStreamObject >> ReturnExpressionFunction;
+				wxLogMessage("Head: %s", ReturnExpressionFunction.getHead());
+				LLU::WS::Flush<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>(*pStreamObject);
+				/*for (int j = 0; j < ReturnExpressionFunction.getArgc(); j++)
+				{
+					LLU::WS::Symbol symbol;
+					*pStreamObject >> symbol;
+					wxLogMessage("Symbols: %s", symbol.getHead());
+
+				}*/
+			}
+			else
+			{
+				*pStreamObject >> args;
+				wxLogMessage("Arguments: %s", args);
+			}
 		}
 	if (Head == "InputNamePacket")
 	{
@@ -95,7 +112,7 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 			for (int j = 0; j < w; j++)
 			{
 				Array[i][j] = *it;
-				//ptr++;
+				//wxLogMessage("i : %i ; j : %i; grayvalue : %i", i, j, Array[i][j]);
 				it++;
 			}
 		}
@@ -107,7 +124,7 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 
 		try
 		{
-			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image", 2) << arrayData << "Byte";
+			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image", 1) << arrayData;//<< "Byte";
 		}
 		catch (LLU::LibraryLinkError e)
 		{
