@@ -68,14 +68,32 @@ void WolframEngine::CheckInput()
 			{
 				*pStreamObject >> ReturnExpressionFunction;
 				wxLogMessage("Head: %s", ReturnExpressionFunction.getHead());
-				LLU::WS::Flush<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>(*pStreamObject);
-				/*for (int j = 0; j < ReturnExpressionFunction.getArgc(); j++)
+				//LLU::WS::Flush<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>(*pStreamObject);
+				for (int j = 0; j < ReturnExpressionFunction.getArgc(); j++)
 				{
-					LLU::WS::Symbol symbol;
-					*pStreamObject >> symbol;
-					wxLogMessage("Symbols: %s", symbol.getHead());
+					switch (WSGetType(link))
+					{
+					case WSTKINT:
+						/* read the integer */
+						int result1;
+						*pStreamObject >> result1;
+						break;
+					case WSTKREAL:
+						/* read the floating point number */
+						float result2;
+						*pStreamObject >> result2;
+						break;
+					case WSTKSTR:
+						*pStreamObject >> args;
+						break;
+						/* read the string. */
+					case WSTKFUNC:
+						LLU::WS::Function function;
+						*pStreamObject >> function;
+						break;
 
-				}*/
+					}
+				}
 			}
 			else
 			{
