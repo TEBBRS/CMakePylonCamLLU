@@ -7,6 +7,15 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
+	st_WolframLibraryData libData;
+	st_DataStore st_ds();
+	DataStore ds=;
+	//DataStoreNode_t dsn_t();
+	//DataStoreNode dsn = (DataStoreNode) dsn_t;
+	LLU::DataList<LLU::NodeType::Image> cont(ds, LLU::Ownership::LibraryLink);
+	//cont.push_back();
+	std::vector<vector<uint8_t>> vector;
+
 	// WSTP Initialise
 	WSENV env = WSInitialize((char*)0);
 	if (env == (WSENV)0)
@@ -41,6 +50,14 @@ int main(int argc, char* argv[])
 		std::cout << "Link activated!";
 	
 	// Data exchange -->> MyProblem
+	try
+	{
+		LLU::LibraryData::setLibraryData(&libData);
+	}
+	catch (LLU::LibraryLinkError e)
+	{
+		std::cout << e.message();
+	}
 	std::cout << "Create the stream object" << std::endl;
 	LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8> test(link);
 
@@ -49,17 +66,12 @@ int main(int argc, char* argv[])
 
 		try
 		{
-			std::initializer_list<mint> d = { 100,100 };
-			LLU::MArrayDimensions dim(d);
-			LLU::NumericArray<uint8_t> image(0, dim);
-			/*uint8_t* ptr = (uint8_t*)pImage->rawData();
-
-			for (auto it = ItPtr.begin(); it != ItPtr.end(); it++)
-			{
-				*ptr = *it;
-				ptr++;
-			}
-			*pStreamObject << LLU::WS::Function("test =  Image[]", 1) << *pImage;*/
+			//DataStore datastore = new DataStore();
+			LLU::Image<uint8_t> image(100, 100, 1, colorspace_t::MImage_CS_Gray,false);
+			/*
+				Copy the data from the camera in the image object
+			*/
+			test << LLU::WS::Function("test =  Image[]", 1) << image;
 		}
 		catch (LLU::LibraryLinkError e)
 		{
@@ -98,7 +110,7 @@ int main(int argc, char* argv[])
 			//std::cout << "Add Integrate[x, {x, 0, 10}] to the stream" << std::endl;
 			LLU::WS::Function enterTextFunction("Image", 1);
 			//test << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image", 1) << "{{ 255, 0, 255}, { 0, 255, 0}, {255, 0, 255}}}";
-			test << LLU::WS::Function("EnterTextPacket", 1) << inputTextString;
+			test << LLU::WS::Function("EnterTextPacket", 1) << inputTextString << vector;
 		}
 
 	}
