@@ -4,7 +4,7 @@ EXTERN_C DLLEXPORT int WolframLibrary_initialize(WolframLibraryData libData) { L
 
 WolframEngine::WolframEngine()
 {
-
+	WolframState = Idle;
 	// WSTP Initialise
 	env = WSInitialize((char*)0);
 	if (env == (WSENV)0)
@@ -41,38 +41,83 @@ WolframEngine::WolframEngine()
 		Initialised = true;
 		pStreamObject = new LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>(link);
 	}
+	if (!Initialised)
+		WolframState = Error;
+	else
+		WolframState = Processing;
+}
 
+WolframEngine::State WolframEngine::PollEngine()
+{
+	if (WolframState == Processing)
+		CheckInput();
+	return WolframState;
+}
+void WolframEngine::CheckInput()
+{
+	std::string args;
+	LLU::WS::Function inputPacketFunction;
+	*pStreamObject >> inputPacketFunction;
+	std::string Head = inputPacketFunction.getHead();
+	int ArgCount = inputPacketFunction.getArgc();
+	wxLogMessage ("-->> Packet received from wolfram -->> head: %s Arguments : %i", Head, ArgCount);
+	for (int i = 0; i < ArgCount; i++)
+		{
+			*pStreamObject >> args;
+			wxLogMessage("Arguments: %s", args);
+		}
+	if (Head == "InputNamePacket")
+	{
+		WolframState = WaitingForInput;
+	}
 }
 void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 {
-	// use raw bitmap access to write MONO8 data directly into the bitmap
-	ItCGrabResultPtr ItPtr(ptrGrabResult);
-	//LLU:colorspace_t cs(MImage_CS_Type::MImage_CS_Gray);
-	
-	mint w = (mint) ptrGrabResult->GetWidth();
-	mint h = (mint) ptrGrabResult->GetHeight();
-	try
+	if (WolframState == WaitingForInput)
 	{
-		pImage = new LLU::Image<uint8_t>(w, h, 1, colorspace_t::MImage_CS_Gray, false);
-		uint8_t* ptr = (uint8_t*)pImage->rawData();
+		// use raw bitmap access to write MONO8 data directly into the bitmap
+		ItCGrabResultPtr ItPtr(ptrGrabResult);
+		//LLU:colorspace_t cs(MImage_CS_Type::MImage_CS_Gray);
 
-		for (auto it = ItPtr.begin(); it != ItPtr.end(); it++)
+		const int w = ptrGrabResult->GetWidth();
+		const int h = ptrGrabResult->GetHeight();
+		//imageAsArray.resize(h);
+		auto it = ItPtr.begin();
+		uint8_t* ptr = (uint8_t*) ptrGrabResult->GetBuffer();
+		Array = new uint8_t*[h];
+		for (int i = 0; i < h; i++)
 		{
-			*ptr = *it;
-			ptr++;
+			//auto imLine = imageAsArray[i];
+			//imLine.resize(w);
+			//uint8_t* ptr = (uint8_t*)imLine.data();
+			//uint8_t* ptr = (uint8_t*)Array[h,0];
+			Array[i] = new uint8_t[w];
+			for (int j = 0; j < w; j++)
+			{
+				Array[i][j] = *it;
+				//ptr++;
+				it++;
+			}
 		}
-		*pStreamObject << LLU::WS::Function("test =  Image[]", 1) << *pImage;
+		hello(&Array[0][0]);
+		hello.setDims(new int[2] {h, w});
+		hello.setRank(2);
+		auto dims = hello.getDims();
+		arrayData = std::unique_ptr<uint8_t[], LLU::WS::ReleaseArray<uint8_t>>(&Array[0][0], hello);
+
+		try
+		{
+			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image", 2) << arrayData << "Byte";
+		}
+		catch (LLU::LibraryLinkError e)
+		{
+			wxLogMessage("%s", e.message());
+		}
+		WolframState = Processing;
 	}
-	catch (LLU::LibraryLinkError e)
-	{
-		wxLogMessage("%s", e.message());
-	}
-	//
 }
 WolframEngine::~WolframEngine()
 {
-	if (pImage != nullptr)
-		delete pImage;
 	delete pStreamObject;
 	WSClose(link);
 	WSDeinitialize(env);

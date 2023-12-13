@@ -111,10 +111,10 @@ void MainFrame::OnScroll(wxScrollEvent& event)
 
 void MainFrame::OnTimer(wxTimerEvent &event)
 {
-
+	engine->PollEngine();
 	if (camera->Connected())
 	{
-
+		
 		Pylon::CGrabResultPtr grabResult = camera->GrabOne();
 		if (grabResult.IsValid())
 			if (grabResult->GrabSucceeded())

@@ -46,7 +46,7 @@ void OutputCamImages::CopyToOutputImage(int ImgNr, Pylon::CGrabResultPtr ptrGrab
             int h = ptrGrabResult->GetHeight();
 
             PixelData bmdata(*m_bitmap[ImgNr]);
-            wxLogMessage("Value of m_bitmap, value:%i", (bool)bmdata);
+            //wxLogMessage("Value of m_bitmap, value:%i", (bool)bmdata);
             if (!bmdata)
                 return;
 
