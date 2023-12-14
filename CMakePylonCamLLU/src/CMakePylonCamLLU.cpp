@@ -63,23 +63,12 @@ int main(int argc, char* argv[])
 
 	while (true)
 	{
-
-		try
+		int argCount = 0
+		do
 		{
-			//DataStore datastore = new DataStore();
-			LLU::Image<uint8_t> image(100, 100, 1, colorspace_t::MImage_CS_Gray,false);
-			/*
-				Copy the data from the camera in the image object
-			*/
-			test << LLU::WS::Function("test =  Image[]", 1) << image;
-		}
-		catch (LLU::LibraryLinkError e)
-		{
-			std::cout << e.message() << std::endl;
-		}
-
-		// Wait for the prompt In[1]:=
-
+			switch (get)
+		} 
+		while (argCount > 0);
 		string inputNameString;
 		LLU::WS::Function inputPacketFunction;
 		test >> inputPacketFunction;
