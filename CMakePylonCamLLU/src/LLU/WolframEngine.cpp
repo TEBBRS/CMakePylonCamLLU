@@ -55,21 +55,65 @@ WolframEngine::State WolframEngine::PollEngine()
 }
 void WolframEngine::CheckInput()
 {
-	std::string args;
-	LLU::WS::Function inputPacketFunction;
-	*pStreamObject >> inputPacketFunction;
-	std::string Head = inputPacketFunction.getHead();
-	int ArgCount = inputPacketFunction.getArgc();
-	wxLogMessage ("-->> Packet received from wolfram -->> head: %s Arguments : %i", Head, ArgCount);
-	for (int i = 0; i < ArgCount; i++)
-		{
-			*pStreamObject >> args;
-			wxLogMessage("Arguments: %s", args);
-		}
-	if (Head == "InputNamePacket")
+	int argCount = 0;
+	int totalArgCount = 0;
+	int arg1;
+	float arg2;
+	std::string arg3;
+	LLU::WS::Function* function;
+	LLU::WS::Symbol* symbol;
+	std::string head;
+	do
 	{
-		WolframState = WaitingForInput;
-	}
+		switch (WSGetType(link))
+		{
+		case WSTKINT:
+			/* read the integer */
+			*pStreamObject >> arg1;
+			totalArgCount -= 1;
+			wxLogMessage(" Integer : %i", arg1);
+			break;
+		case WSTKREAL:
+			/* read the floating point number */
+			*pStreamObject >> arg2;
+			totalArgCount -= 1;
+			wxLogMessage(" Real : %f", arg2);
+			break;
+		case WSTKSTR:
+			*pStreamObject >> arg3;
+			totalArgCount -= 1;
+			wxLogMessage(" String : %s", arg3);
+			break;
+			/* read the string. */
+		case WSTKFUNC:
+			function = new LLU::WS::Function();
+			*pStreamObject >> *function;
+			argCount += function->getArgc();
+			head = function->getHead();
+			totalArgCount += argCount;
+			wxLogMessage("Function  Head : %s Nr. of arguments : %i", head, argCount);
+			if (head == "InputNamePacket")
+			{
+				WolframState = WaitingForInput;
+			}
+			delete function;
+			break;
+		case WSTKARRAY:
+			break;
+		case WSTKERROR:
+			break;
+		case WSTKSYM:
+			symbol = new LLU::WS::Symbol();
+			*pStreamObject >> *symbol;
+			argCount -= 1;
+			head = symbol->getHead();
+			totalArgCount += argCount;
+			wxLogMessage("Symbol : %s", head);
+			delete symbol;
+		}
+
+	} while (totalArgCount > 0);
+
 }
 void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 {
@@ -107,7 +151,7 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 
 		try
 		{
-			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image", 2) << arrayData << "Byte";
+			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image", 0);// << arrayData;
 		}
 		catch (LLU::LibraryLinkError e)
 		{
