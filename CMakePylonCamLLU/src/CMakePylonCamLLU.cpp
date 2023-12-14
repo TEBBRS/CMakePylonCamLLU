@@ -51,7 +51,8 @@ int main(int argc, char* argv[])
 		int arg1;
 		float arg2;
 		std::string arg3;
-		LLU::WS::Function function;
+		LLU::WS::Function* function;
+		LLU::WS::Symbol* symbol;
 		std::string head;
 		do
 		{
@@ -59,33 +60,43 @@ int main(int argc, char* argv[])
 			{
 			case WSTKINT:
 				/* read the integer */
-				int result1;
 				test >> arg1;
 				totalArgCount -= 1;
-				std::cout << "Integer : " << arg1;
+				std::cout << " Integer : " << arg1;
 				break;
 			case WSTKREAL:
 				/* read the floating point number */
-				float result2;
 				test >> arg2;
 				totalArgCount -= 1;
-				std::cout << "Real : " << arg2;
+				std::cout << " Real : " << arg2;
 				break;
 			case WSTKSTR:
 				test >> arg3;
 				totalArgCount -= 1;
-				std::cout << "String : " << arg3;
+				std::cout << " String : " << arg3;
 				break;
 				/* read the string. */
 			case WSTKFUNC:
-				test >> function;
-				argCount += function.getArgc();
-				head = function.getHead();
+				function = new LLU::WS::Function();
+				test >> *function;
+				argCount += function->getArgc();
+				head = function->getHead();
 				totalArgCount += argCount;
-				std::cout << "Function  Head : " << head << " Nr. of arguments : " << argCount;
+				std::cout << "Function  Head : " << head << " Nr. of arguments : " << argCount << std::endl;
+				delete function;
 				break;
 			case WSTKARRAY:
 				break;
+			case WSTKERROR:
+				break;
+			case WSTKSYM:
+				symbol = new LLU::WS::Symbol();
+				test >> *symbol;
+				argCount -= 1;
+				head = symbol->getHead();
+				totalArgCount += argCount;
+				std::cout << "Symbol : " << head;
+				delete symbol;
 			}
 
 		} 
