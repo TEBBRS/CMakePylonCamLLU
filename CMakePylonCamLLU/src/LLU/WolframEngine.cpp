@@ -102,7 +102,7 @@ void WolframEngine::CheckInput()
 			{
 				WolframState = WaitingForInput;
 				wxLogMessage("Total was: %i", totalArgCount);
-				//totalArgCount = 1;
+				totalArgCount = 1;
 			}
 			delete function;
 			break;	
@@ -129,22 +129,14 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 	{
 		// use raw bitmap access to write MONO8 data directly into the bitmap
 		ItCGrabResultPtr ItPtr(ptrGrabResult);
-		//LLU:colorspace_t cs(MImage_CS_Type::MImage_CS_Gray);
+		const int w = 2; // ptrGrabResult->GetWidth();
+		const int h = 2; // ptrGrabResult->GetHeight();
 
-		const int w = ptrGrabResult->GetWidth();
-		const int h = ptrGrabResult->GetHeight();
-		//imageAsArray.resize(h);
-		//for (int j = 0; j < h; j++)
-			//imageAsArray[j].resize(w);
 		auto it = ItPtr.begin();
 		uint8_t* ptr = (uint8_t*) ptrGrabResult->GetBuffer();
 		Array = new uint8_t*[h];
 		for (int i = 0; i < h; i++)
 		{
-			//auto imLine = imageAsArray[i];
-			//imLine.resize(w);
-			//uint8_t* ptr = (uint8_t*)imLine.data();
-			//uint8_t* ptr = (uint8_t*)Array[h,0];
 			Array[i] = new uint8_t[w];
 			for (int j = 0; j < w; j++)
 			{
@@ -165,13 +157,13 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 		vec.push_back(nullptr);
 		char** head = vec.data();
 
-		hello.setHead(head);
+		hello.setHeads(head);
 		int* dims = hello.getDims();
 		arrayData = std::unique_ptr<uint8_t[], LLU::WS::ReleaseArray<uint8_t>>(&Array[0][0], hello);
 
 		try
 		{
-			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image", 2)<< arrayData << "Integer8";
+			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image", 2) << arrayData << "Byte";
 		}
 		catch (LLU::LibraryLinkError e)
 		{
