@@ -157,7 +157,7 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 		vec.push_back(nullptr);
 		char** head = vec.data();
 
-		hello.setHeads(head);
+		//hello.setHeads(head);
 		int* dims = hello.getDims();
 		arrayData = std::unique_ptr<uint8_t[], LLU::WS::ReleaseArray<uint8_t>>(&Array[0][0], hello);
 
