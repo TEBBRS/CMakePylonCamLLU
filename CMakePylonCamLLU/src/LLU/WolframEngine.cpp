@@ -157,12 +157,21 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 		int* dims1{ new int[2] { h, w } };
 		hello.setDims(dims1);
 		hello.setRank(2);
+		std::string array[] = { "Automatic" };
+		std::vector<char*> vec;
+		std::transform(std::begin(array), std::end(array),
+			std::back_inserter(vec),
+			[](std::string& s) { s.push_back(0); return &s[0]; });
+		vec.push_back(nullptr);
+		char** head = vec.data();
+
+		hello.setHead(head);
 		int* dims = hello.getDims();
 		arrayData = std::unique_ptr<uint8_t[], LLU::WS::ReleaseArray<uint8_t>>(&Array[0][0], hello);
 
 		try
 		{
-			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image", 1)<< arrayData;
+			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image[]", 2)<< arrayData << "Integer8";
 		}
 		catch (LLU::LibraryLinkError e)
 		{
