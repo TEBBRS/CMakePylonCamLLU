@@ -139,7 +139,7 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 			for (int j = 0; j < w; j++)
 			{
 				Array[i][j] = *it;
-				//ptr++;
+				//wxLogMessage("i : %i ; j : %i; grayvalue : %i", i, j, Array[i][j]);
 				it++;
 			}
 		}
