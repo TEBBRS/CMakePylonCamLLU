@@ -63,55 +63,61 @@ void WolframEngine::CheckInput()
 	LLU::WS::Function* function;
 	LLU::WS::Symbol* symbol;
 	std::string head;
+	int type = 0;
+	int prevType=0;
 	do
 	{
-		switch (WSGetType(link))
+		prevType = type;
+		type = WSGetType(link);
+		switch (type)
 		{
 		case WSTKINT:
 			/* read the integer */
 			*pStreamObject >> arg1;
 			totalArgCount -= 1;
-			wxLogMessage(" Integer : %i", arg1);
+			wxLogMessage(" Integer : %i, total args %i", arg1, totalArgCount);
 			break;
 		case WSTKREAL:
 			/* read the floating point number */
 			*pStreamObject >> arg2;
 			totalArgCount -= 1;
-			wxLogMessage(" Real : %f", arg2);
+			wxLogMessage(" Real : %f, total args %i", arg2, totalArgCount);
 			break;
 		case WSTKSTR:
 			*pStreamObject >> arg3;
 			totalArgCount -= 1;
-			wxLogMessage(" String : %s", arg3);
+			wxLogMessage(" String : %s, total args %i", arg3, totalArgCount);
 			break;
 			/* read the string. */
 		case WSTKFUNC:
 			function = new LLU::WS::Function();
 			*pStreamObject >> *function;
-			argCount += function->getArgc();
+			argCount = function->getArgc();
 			head = function->getHead();
+			if (prevType == WSTKFUNC)
+				totalArgCount -= 1;
 			totalArgCount += argCount;
-			wxLogMessage("Function  Head : %s Nr. of arguments : %i", head, argCount);
+			wxLogMessage("Function  Head : %s Nr. of arguments : %i, total args : %i", head, argCount, totalArgCount);
 			if (head == "InputNamePacket")
 			{
 				WolframState = WaitingForInput;
-				totalArgCount = 1;
+				wxLogMessage("Total was: %i", totalArgCount);
+				//totalArgCount = 1;
 			}
 			delete function;
-			break;
-		case WSTKARRAY:
-			break;
-	
-		case WSTKERROR:
-			break;
+			break;	
+		//case WSTKERROR:
+		//	break;
 		case WSTKSYM:
 			symbol = new LLU::WS::Symbol();
 			*pStreamObject >> *symbol;
-			argCount -= 1;
 			head = symbol->getHead();
-			totalArgCount += argCount;
+			totalArgCount -= 1;
 			wxLogMessage("Symbol : %s", head);
 			delete symbol;
+			break;
+		default:
+			throw new std::exception("Not implemeneted type %i ", type);
 		}
 
 	} while (totalArgCount > 0);
@@ -153,12 +159,13 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 
 		try
 		{
-			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image", 0);// << arrayData;
+			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image", 1)<< arrayData;
 		}
 		catch (LLU::LibraryLinkError e)
 		{
 			wxLogMessage("%s", e.message());
 		}
+		arrayData.release();
 		WolframState = Processing;
 	}
 }
