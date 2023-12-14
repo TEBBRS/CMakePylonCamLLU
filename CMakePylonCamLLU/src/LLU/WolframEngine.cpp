@@ -95,11 +95,13 @@ void WolframEngine::CheckInput()
 			if (head == "InputNamePacket")
 			{
 				WolframState = WaitingForInput;
+				totalArgCount = 1;
 			}
 			delete function;
 			break;
 		case WSTKARRAY:
 			break;
+	
 		case WSTKERROR:
 			break;
 		case WSTKSYM:
