@@ -134,6 +134,8 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 		const int w = ptrGrabResult->GetWidth();
 		const int h = ptrGrabResult->GetHeight();
 		//imageAsArray.resize(h);
+		//for (int j = 0; j < h; j++)
+			//imageAsArray[j].resize(w);
 		auto it = ItPtr.begin();
 		uint8_t* ptr = (uint8_t*) ptrGrabResult->GetBuffer();
 		Array = new uint8_t*[h];
@@ -152,9 +154,10 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 			}
 		}
 		hello(&Array[0][0]);
-		hello.setDims(new int[2] {h, w});
+		int* dims1{ new int[2] { h, w } };
+		hello.setDims(dims1);
 		hello.setRank(2);
-		auto dims = hello.getDims();
+		int* dims = hello.getDims();
 		arrayData = std::unique_ptr<uint8_t[], LLU::WS::ReleaseArray<uint8_t>>(&Array[0][0], hello);
 
 		try
@@ -165,7 +168,7 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 		{
 			wxLogMessage("%s", e.message());
 		}
-		arrayData.release();
+		//arrayData.release();
 		WolframState = Processing;
 	}
 }
