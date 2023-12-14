@@ -1,8 +1,8 @@
 ﻿# CMakeList.txt : CMake project for CMakePylonCamLLU, include source and define
 # project specific logic here.
 #
-set (LLU_ROOT "D:/VS2022/LLU/out/install/x64-Debug/cmake")
-#set (LLU_ROOT "C:/Users/ikke/source/repos/LibraryLinkUtilities/out/install/x64-Debug")
+#set (LLU_ROOT "D:/VS2022/LLU/out/install/x64-Debug/cmake")
+set (LLU_ROOT "C:/Users/ikke/source/repos/LibraryLinkUtilities/out/install/x64-Debug")
 find_package(LLU NO_MODULE REQUIRED PATH_SUFFIXES LLU)
 # Add source to this project's executable.
 file (GLOB src src/*.cpp)
