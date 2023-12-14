@@ -7,14 +7,6 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	st_WolframLibraryData libData;
-	st_DataStore st_ds();
-	DataStore ds=;
-	//DataStoreNode_t dsn_t();
-	//DataStoreNode dsn = (DataStoreNode) dsn_t;
-	LLU::DataList<LLU::NodeType::Image> cont(ds, LLU::Ownership::LibraryLink);
-	//cont.push_back();
-	std::vector<vector<uint8_t>> vector;
 
 	// WSTP Initialise
 	WSENV env = WSInitialize((char*)0);
@@ -49,58 +41,63 @@ int main(int argc, char* argv[])
 	else
 		std::cout << "Link activated!";
 	
-	// Data exchange -->> MyProblem
-	try
-	{
-		LLU::LibraryData::setLibraryData(&libData);
-	}
-	catch (LLU::LibraryLinkError e)
-	{
-		std::cout << e.message();
-	}
 	std::cout << "Create the stream object" << std::endl;
 	LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8> test(link);
 
 	while (true)
 	{
-		int argCount = 0
+		int argCount = 0;
+		int totalArgCount = 0;
+		int arg1;
+		float arg2;
+		std::string arg3;
+		LLU::WS::Function function;
+		std::string head;
 		do
 		{
-			switch (get)
-		} 
-		while (argCount > 0);
-		string inputNameString;
-		LLU::WS::Function inputPacketFunction;
-		test >> inputPacketFunction;
-		string Head = inputPacketFunction.getHead();
-		int ArgCount = inputPacketFunction.getArgc();
-		cout << "-->> Function head:" << Head << " Arguments :" << ArgCount << endl;
-		if (ArgCount < 10)
-		{
-			for (int i = 0; i < ArgCount; i++)
+			switch (WSGetType(link))
 			{
-				if (Head == "ReturnExpressionPacket")
-				{
-					int result;
-					test >> result;
-					cout << result;
-				}
-				else
-				{
-					test >> inputNameString;
-					cout << inputNameString;
-				}
+			case WSTKINT:
+				/* read the integer */
+				int result1;
+				test >> arg1;
+				totalArgCount -= 1;
+				std::cout << "Integer : " << arg1;
+				break;
+			case WSTKREAL:
+				/* read the floating point number */
+				float result2;
+				test >> arg2;
+				totalArgCount -= 1;
+				std::cout << "Real : " << arg2;
+				break;
+			case WSTKSTR:
+				test >> arg3;
+				totalArgCount -= 1;
+				std::cout << "String : " << arg3;
+				break;
+				/* read the string. */
+			case WSTKFUNC:
+				test >> function;
+				argCount += function.getArgc();
+				head = function.getHead();
+				totalArgCount += argCount;
+				std::cout << "Function  Head : " << head << " Nr. of arguments : " << argCount;
+				break;
+			case WSTKARRAY:
+				break;
 			}
-		}
-		if (Head == "InputNamePacket")
-		{
-			string inputTextString;
-			std::cin >> inputTextString;
-			//std::cout << "Add Integrate[x, {x, 0, 10}] to the stream" << std::endl;
-			LLU::WS::Function enterTextFunction("Image", 1);
-			//test << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image", 1) << "{{ 255, 0, 255}, { 0, 255, 0}, {255, 0, 255}}}";
-			test << LLU::WS::Function("EnterTextPacket", 1) << inputTextString << vector;
-		}
+
+		} 
+		while (totalArgCount > 0);
+
+		string inputTextString;
+		std::cin >> inputTextString;
+		//std::cout << "Add Integrate[x, {x, 0, 10}] to the stream" << std::endl;
+		LLU::WS::Function enterTextFunction(inputTextString, 0);
+		//test << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image", 1) << "{{ 255, 0, 255}, { 0, 255, 0}, {255, 0, 255}}}";
+		test << LLU::WS::Function("EnterTextPacket", 0) << inputTextString;
+
 
 	}
 
