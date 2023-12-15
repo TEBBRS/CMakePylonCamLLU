@@ -67,6 +67,7 @@ void WolframEngine::CheckInput()
 	int type = 0;
 	int prevType=0;
 	std::stack<int, std::deque<int, std::allocator<int>>> stack;
+	bool firstEntry = true;
 	do
 	{
 		prevType = type;
@@ -96,11 +97,15 @@ void WolframEngine::CheckInput()
 			*pStreamObject >> *function;
 			argCount = function->getArgc();
 			head = function->getHead();
-			if (argCount > 0)
+			if (firstEntry)
+				totalArgCount = argCount;
+			else
 			{
-				stack.push(argCount);
+				totalArgCount -= 1;
+				stack.push(totalArgCount);
 				totalArgCount = argCount;
 			}
+
 			/*if (prevType == WSTKFUNC)
 				totalArgCount -= 1;*/
 			
@@ -137,8 +142,9 @@ void WolframEngine::CheckInput()
 			{
 				stack.pop();
 				if (!stack.empty())
-					totalArgCount = stack.top()-1;
+					totalArgCount = stack.top();
 			}
+		firstEntry = false;
 	} while (!stack.empty());
 
 }
