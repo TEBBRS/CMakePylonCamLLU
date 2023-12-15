@@ -62,9 +62,11 @@ void WolframEngine::CheckInput()
 	std::string arg3;
 	LLU::WS::Function* function;
 	LLU::WS::Symbol* symbol;
+	const char* errorMessage;
 	std::string head;
 	int type = 0;
 	int prevType=0;
+	std::stack<int, std::deque<int, std::allocator<int>>> stack;
 	do
 	{
 		prevType = type;
@@ -94,15 +96,16 @@ void WolframEngine::CheckInput()
 			*pStreamObject >> *function;
 			argCount = function->getArgc();
 			head = function->getHead();
-			if (prevType == WSTKFUNC)
-				totalArgCount -= 1;
-			totalArgCount += argCount;
+			stack.push(argCount);
+			/*if (prevType == WSTKFUNC)
+				totalArgCount -= 1;*/
+			totalArgCount = argCount;
 			wxLogMessage("Function  Head : %s Nr. of arguments : %i, total args : %i", head, argCount, totalArgCount);
 			if (head == "InputNamePacket")
 			{
 				WolframState = WaitingForInput;
 				wxLogMessage("Total was: %i", totalArgCount);
-				totalArgCount = 1;
+				//totalArgCount = 1;
 			}
 			delete function;
 			break;	
@@ -116,11 +119,23 @@ void WolframEngine::CheckInput()
 			wxLogMessage("Symbol : %s", head);
 			delete symbol;
 			break;
+		case WSTKERROR:
+			errorMessage = WSErrorMessage(link);
+			totalArgCount -= 1;
+			wxLogMessage("Error : %s", errorMessage);
+			break;
 		default:
 			throw new std::exception("Not implemeneted type %i ", type);
+			break;
 		}
-
-	} while (totalArgCount > 0);
+		if (totalArgCount == 0)
+			if (!stack.empty())
+			{
+				stack.pop();
+				if (!stack.empty())
+					totalArgCount = stack.top()-1;
+			}
+	} while (!stack.empty());
 
 }
 void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
@@ -163,7 +178,7 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 
 		try
 		{
-			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Image", 2) << arrayData << "Byte";
+			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << LLU::WS::Function("Image", 2) << arrayData << "Byte";
 		}
 		catch (LLU::LibraryLinkError e)
 		{
