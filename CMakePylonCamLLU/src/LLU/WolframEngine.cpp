@@ -66,8 +66,7 @@ void WolframEngine::CheckInput()
 	std::string head;
 	int type = 0;
 	int prevType=0;
-	std::stack<int, std::deque<int, std::allocator<int>>> stack;
-	bool firstEntry = true;
+	std::stack<stack_st*, std::deque<stack_st*, std::allocator<stack_st*>>> stack;
 	bool exit = false;
 
 	do
@@ -102,18 +101,17 @@ void WolframEngine::CheckInput()
 			*pStreamObject >> *function;
 			argCount = function->getArgc();
 			head = function->getHead();
-			firstEntry = totalArgCount == 0;
-			if (firstEntry)
+			if (totalArgCount == 0)
 				totalArgCount = argCount;
 			else
-			{
-				totalArgCount -= 1;
 				if (argCount > 0)
-				{
-					stack.push(totalArgCount);
+				{	
+					pStack_st = new stack_st{ totalArgCount - 1, head };
+					wxLogMessage("Written to stack head : %s , total %i, stacksize %i", pStack_st->head, pStack_st->total, stack.size()+1);
+					stack.push(pStack_st);
 					totalArgCount = argCount;
 				}
-			}
+			
 
 			/*if (prevType == WSTKFUNC)
 				totalArgCount -= 1;*/
@@ -146,23 +144,16 @@ void WolframEngine::CheckInput()
 			throw new std::exception("Not implemeneted type %i ", type);
 			break;
 		}
-		if (stack.size() > 0)
-		{
-			int stacksize = stack.size();
-			int stacktop = stack.top();
-			wxLogMessage("Stack size %i, top value %i, totalArgCount %i", stacksize, stacktop, totalArgCount);
-		}
-		else
-			wxLogMessage("Empty stack - totalArgCount %i", totalArgCount);
-
-		if (totalArgCount == 0)
+		if (totalArgCount == 0 && !exit)
 			if (!stack.empty())
 			{
+				delete pStack_st;
 				stack.pop();
-				if (!stack.empty())
-					totalArgCount = stack.top();
+				pStack_st = stack.top(); 
+				wxLogMessage("Read from stack head : %s , total %i, stack size %i", pStack_st->head, pStack_st->total, stack.size());
+
+					
 			}
-		firstEntry = false;
 	} while (!exit);//!stack.empty()||totalArgCount>0);
 
 }

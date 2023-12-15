@@ -27,5 +27,10 @@ class WolframEngine
 		uint8_t** Array;
 		LLU::WS::ReleaseArray<uint8_t> hello;
 		LLU::WS::ArrayData<uint8_t> arrayData;
-	
+		struct stack_st
+		{
+			int total=0;
+			std::string head="";
+		};
+		stack_st* pStack_st;
 };
