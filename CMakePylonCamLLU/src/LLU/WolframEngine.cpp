@@ -96,10 +96,14 @@ void WolframEngine::CheckInput()
 			*pStreamObject >> *function;
 			argCount = function->getArgc();
 			head = function->getHead();
-			stack.push(argCount);
+			if (argCount > 0)
+			{
+				stack.push(argCount);
+				totalArgCount = argCount;
+			}
 			/*if (prevType == WSTKFUNC)
 				totalArgCount -= 1;*/
-			totalArgCount = argCount;
+			
 			wxLogMessage("Function  Head : %s Nr. of arguments : %i, total args : %i", head, argCount, totalArgCount);
 			if (head == "InputNamePacket")
 			{
