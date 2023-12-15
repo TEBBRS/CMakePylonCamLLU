@@ -68,6 +68,8 @@ void WolframEngine::CheckInput()
 	int prevType=0;
 	std::stack<int, std::deque<int, std::allocator<int>>> stack;
 	bool firstEntry = true;
+	bool exit = false;
+
 	do
 	{
 		prevType = type;
@@ -78,38 +80,45 @@ void WolframEngine::CheckInput()
 			/* read the integer */
 			*pStreamObject >> arg1;
 			totalArgCount -= 1;
-			wxLogMessage(" Integer : %i, total args %i", arg1, totalArgCount);
+			wxLogMessage(" Integer : %i", arg1);
 			break;
 		case WSTKREAL:
 			/* read the floating point number */
 			*pStreamObject >> arg2;
 			totalArgCount -= 1;
-			wxLogMessage(" Real : %f, total args %i", arg2, totalArgCount);
+			wxLogMessage(" Real : %f", arg2);
 			break;
 		case WSTKSTR:
+			/* read the string. */
 			*pStreamObject >> arg3;
 			totalArgCount -= 1;
-			wxLogMessage(" String : %s, total args %i", arg3, totalArgCount);
+			wxLogMessage(" String : %s", arg3);
+			if (WolframState == WaitingForInput && totalArgCount == 0)
+				exit = true;
 			break;
-			/* read the string. */
+			
 		case WSTKFUNC:
 			function = new LLU::WS::Function();
 			*pStreamObject >> *function;
 			argCount = function->getArgc();
 			head = function->getHead();
+			firstEntry = totalArgCount == 0;
 			if (firstEntry)
 				totalArgCount = argCount;
 			else
 			{
 				totalArgCount -= 1;
-				stack.push(totalArgCount);
-				totalArgCount = argCount;
+				if (argCount > 0)
+				{
+					stack.push(totalArgCount);
+					totalArgCount = argCount;
+				}
 			}
 
 			/*if (prevType == WSTKFUNC)
 				totalArgCount -= 1;*/
 			
-			wxLogMessage("Function  Head : %s Nr. of arguments : %i, total args : %i", head, argCount, totalArgCount);
+			wxLogMessage("Function  Head : %s Nr. of arguments : %i", head, argCount);
 			if (head == "InputNamePacket")
 			{
 				WolframState = WaitingForInput;
@@ -137,6 +146,15 @@ void WolframEngine::CheckInput()
 			throw new std::exception("Not implemeneted type %i ", type);
 			break;
 		}
+		if (stack.size() > 0)
+		{
+			int stacksize = stack.size();
+			int stacktop = stack.top();
+			wxLogMessage("Stack size %i, top value %i, totalArgCount %i", stacksize, stacktop, totalArgCount);
+		}
+		else
+			wxLogMessage("Empty stack - totalArgCount %i", totalArgCount);
+
 		if (totalArgCount == 0)
 			if (!stack.empty())
 			{
@@ -145,7 +163,7 @@ void WolframEngine::CheckInput()
 					totalArgCount = stack.top();
 			}
 		firstEntry = false;
-	} while (!stack.empty());
+	} while (!exit);//!stack.empty()||totalArgCount>0);
 
 }
 void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
