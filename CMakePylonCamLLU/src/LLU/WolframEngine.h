@@ -26,6 +26,7 @@ class WolframEngine
 		LLU::WSStream<LLU::WS::Encoding::UTF8, LLU::WS::Encoding::UTF8>* pStreamObject;
 		std::vector<std::vector<uint8_t>> imageAsArray;
 		uint8_t** Array;
+		uint8_t* Array1;
 		LLU::WS::ReleaseArray<uint8_t> hello;
 		LLU::WS::ArrayData<uint8_t> arrayData;
 		struct stack_st

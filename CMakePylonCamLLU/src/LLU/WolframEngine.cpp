@@ -158,15 +158,17 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 
 		auto it = ItPtr.begin();
 		uint8_t* ptr = (uint8_t*) ptrGrabResult->GetBuffer();
-		Array = new uint8_t*[h];
+		//Array = new uint8_t*[h];
+		byte value = 0;
+		Array1 = (uint8_t *) malloc(h * w * sizeof(uint8_t));
 		for (int i = 0; i < h; i++)
 		{
-			Array[i] = new uint8_t[w];
+			//Array[i] = new uint8_t[w];
 			for (int j = 0; j < w; j++)
 			{
-				Array[i][j] = *it;
+				Array1[i*h+j] = value++;
 				//wxLogMessage("i : %i ; j : %i; grayvalue : %i", i, j, Array[i][j]);
-				it++;
+				//it++;
 			}
 		}
 		hello(&Array[0][0]);
@@ -187,8 +189,8 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 
 		try
 		{
-			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << "10";
-			//*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << LLU::WS::Function("Image", 1) << arrayData;
+			//*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << "10";
+			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << LLU::WS::Function("Image", 2) << arrayData << "Byte";
 
 		}
 		catch (LLU::LibraryLinkError e)
