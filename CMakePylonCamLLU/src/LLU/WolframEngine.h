@@ -14,6 +14,7 @@ class WolframEngine
 		State PollEngine();
 		void CheckInput();
 		void CreateImage(Pylon::CGrabResultPtr ptrGrabResult);
+		bool WolframEngine::CheckInputRecursive(int NrOfArguments);
 		~WolframEngine();
 
 	private:
@@ -29,8 +30,12 @@ class WolframEngine
 		LLU::WS::ArrayData<uint8_t> arrayData;
 		struct stack_st
 		{
+			enum stack_stType { Root=0, Parameter=1 };
+			stack_stType type;
+			int argCount;
 			int total=0;
 			std::string head="";
+			using elementType = stack_stType;
 		};
 		stack_st* pStack_st;
 };

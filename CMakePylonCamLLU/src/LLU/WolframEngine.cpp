@@ -55,8 +55,15 @@ WolframEngine::State WolframEngine::PollEngine()
 }
 void WolframEngine::CheckInput()
 {
+	while (!CheckInputRecursive(0))
+	{
+	}
+
+}
+bool WolframEngine::CheckInputRecursive(int NrOfArguments)
+{
 	int argCount = 0;
-	int totalArgCount = 0;
+	int totalArgCount = NrOfArguments;
 	int arg1;
 	float arg2;
 	std::string arg3;
@@ -65,13 +72,10 @@ void WolframEngine::CheckInput()
 	const char* errorMessage;
 	std::string head;
 	int type = 0;
-	int prevType=0;
-	std::stack<stack_st*, std::deque<stack_st*, std::allocator<stack_st*>>> stack;
-	bool exit = false;
+
 
 	do
 	{
-		prevType = type;
 		type = WSGetType(link);
 		switch (type)
 		{
@@ -92,41 +96,35 @@ void WolframEngine::CheckInput()
 			*pStreamObject >> arg3;
 			totalArgCount -= 1;
 			wxLogMessage(" String : %s", arg3);
-			if (WolframState == WaitingForInput && totalArgCount == 0)
-				exit = true;
 			break;
-			
+
 		case WSTKFUNC:
 			function = new LLU::WS::Function();
 			*pStreamObject >> *function;
 			argCount = function->getArgc();
 			head = function->getHead();
-			if (totalArgCount == 0)
+			if (totalArgCount==0)
 				totalArgCount = argCount;
 			else
-				if (argCount > 0)
-				{	
-					pStack_st = new stack_st{ totalArgCount - 1, head };
-					wxLogMessage("Written to stack head : %s , total %i, stacksize %i", pStack_st->head, pStack_st->total, stack.size()+1);
-					stack.push(pStack_st);
-					totalArgCount = argCount;
-				}
-			
-
-			/*if (prevType == WSTKFUNC)
-				totalArgCount -= 1;*/
-			
+				totalArgCount -= 1;
 			wxLogMessage("Function  Head : %s Nr. of arguments : %i", head, argCount);
+
+
 			if (head == "InputNamePacket")
 			{
 				WolframState = WaitingForInput;
 				wxLogMessage("Total was: %i", totalArgCount);
-				//totalArgCount = 1;
 			}
+			if (argCount > 0)
+			{
+				if (CheckInputRecursive(totalArgCount))
+					return true;
+			}
+
 			delete function;
-			break;	
-		//case WSTKERROR:
-		//	break;
+			break;
+			//case WSTKERROR:
+			//	break;
 		case WSTKSYM:
 			symbol = new LLU::WS::Symbol();
 			*pStreamObject >> *symbol;
@@ -144,27 +142,19 @@ void WolframEngine::CheckInput()
 			throw new std::exception("Not implemeneted type %i ", type);
 			break;
 		}
-		if (totalArgCount == 0 && !exit)
-			if (!stack.empty())
-			{
-				delete pStack_st;
-				stack.pop();
-				pStack_st = stack.top(); 
-				wxLogMessage("Read from stack head : %s , total %i, stack size %i", pStack_st->head, pStack_st->total, stack.size());
-
-					
-			}
-	} while (!exit);//!stack.empty()||totalArgCount>0);
-
+	} while (totalArgCount>0);
+	return WolframState == WaitingForInput;
+	;
 }
+
 void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 {
 	if (WolframState == WaitingForInput)
 	{
 		// use raw bitmap access to write MONO8 data directly into the bitmap
 		ItCGrabResultPtr ItPtr(ptrGrabResult);
-		const int w = 2; // ptrGrabResult->GetWidth();
-		const int h = 2; // ptrGrabResult->GetHeight();
+		const int w = 10; // ptrGrabResult->GetWidth();
+		const int h = 10; // ptrGrabResult->GetHeight();
 
 		auto it = ItPtr.begin();
 		uint8_t* ptr = (uint8_t*) ptrGrabResult->GetBuffer();
@@ -197,7 +187,9 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 
 		try
 		{
-			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << LLU::WS::Function("Image", 2) << arrayData << "Byte";
+			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << "10";
+			//*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << LLU::WS::Function("Image", 1) << arrayData;
+
 		}
 		catch (LLU::LibraryLinkError e)
 		{
