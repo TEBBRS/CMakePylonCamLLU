@@ -55,8 +55,10 @@ WolframEngine::State WolframEngine::PollEngine()
 }
 void WolframEngine::CheckInput()
 {
+	StackSize = 0;
 	while (!CheckInputRecursive(0))
 	{
+		StackSize = 0;
 	}
 
 }
@@ -154,8 +156,8 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 	{
 		// use raw bitmap access to write MONO8 data directly into the bitmap
 		ItCGrabResultPtr ItPtr(ptrGrabResult);
-		const int w = 20; // ptrGrabResult->GetWidth();
-		const int h = 20; // ptrGrabResult->GetHeight();
+		const int w = 10; // ptrGrabResult->GetWidth();
+		const int h = 10; // ptrGrabResult->GetHeight();
 
 		auto it = ItPtr.begin();
 		uint8_t* ptr = (uint8_t*) ptrGrabResult->GetBuffer();
