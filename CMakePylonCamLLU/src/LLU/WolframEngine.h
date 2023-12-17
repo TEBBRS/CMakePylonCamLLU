@@ -14,7 +14,7 @@ class WolframEngine
 		State PollEngine();
 		void CheckInput();
 		void CreateImage(Pylon::CGrabResultPtr ptrGrabResult);
-		bool WolframEngine::CheckInputRecursive(int NrOfArguments);
+		bool WolframEngine::CheckInputRecursive(bool initialCall, int NrOfArguments);
 		~WolframEngine();
 
 	private:

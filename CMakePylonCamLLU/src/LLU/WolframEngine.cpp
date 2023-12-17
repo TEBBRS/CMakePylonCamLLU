@@ -61,7 +61,7 @@ void WolframEngine::CheckInput()
 	}
 
 }
-bool WolframEngine::CheckInputRecursive(int NrOfArguments)
+bool WolframEngine::CheckInputRecursive(bool initialCall, int NrOfArguments)
 {
 	int argCount = 0;
 	int totalArgCount = NrOfArguments;
@@ -104,10 +104,8 @@ bool WolframEngine::CheckInputRecursive(int NrOfArguments)
 			*pStreamObject >> *function;
 			argCount = function->getArgc();
 			head = function->getHead();
-			if (totalArgCount==0)
-				totalArgCount = argCount;
-			else
-				totalArgCount -= 1;
+			totalArgCount = argCount;
+	
 			wxLogMessage("Function  Head : %s Nr. of arguments : %i", head, argCount);
 
 
@@ -119,7 +117,7 @@ bool WolframEngine::CheckInputRecursive(int NrOfArguments)
 			if (argCount > 0)
 			{
 				wxLogMessage("==== Stack nesting level ===== : %i NrOfArguments %i", ++StackSize, totalArgCount);
-				if (CheckInputRecursive(totalArgCount))
+				if (CheckInputRecursive(false, totalArgCount-1))
 					return true;
 			}
 
