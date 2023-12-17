@@ -58,7 +58,6 @@ void WolframEngine::CheckInput()
 	StackSize = 0;
 	while (!CheckInputRecursive(0))
 	{
-		StackSize = 0;
 	}
 
 }
@@ -74,7 +73,7 @@ bool WolframEngine::CheckInputRecursive(int NrOfArguments)
 	const char* errorMessage;
 	std::string head;
 	int type = 0;
-	wxLogMessage("==== Stack size ===== : %i", ++StackSize);
+
 
 	do
 	{
@@ -119,6 +118,7 @@ bool WolframEngine::CheckInputRecursive(int NrOfArguments)
 			}
 			if (argCount > 0)
 			{
+				wxLogMessage("==== Stack nesting level ===== : %i NrOfArguments %i", ++StackSize, totalArgCount);
 				if (CheckInputRecursive(totalArgCount))
 					return true;
 			}
@@ -145,7 +145,7 @@ bool WolframEngine::CheckInputRecursive(int NrOfArguments)
 			break;
 		}
 	} while (totalArgCount>0);
-	wxLogMessage("==== Stack size ===== : %i", --StackSize);
+	wxLogMessage("==== Stack nesting level ===== : %i", --StackSize);
 	return WolframState == WaitingForInput;
 	;
 }
