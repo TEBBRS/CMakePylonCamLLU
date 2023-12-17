@@ -72,7 +72,7 @@ bool WolframEngine::CheckInputRecursive(int NrOfArguments)
 	const char* errorMessage;
 	std::string head;
 	int type = 0;
-
+	wxLogMessage("==== Stack size ===== : %i", ++StackSize);
 
 	do
 	{
@@ -143,6 +143,7 @@ bool WolframEngine::CheckInputRecursive(int NrOfArguments)
 			break;
 		}
 	} while (totalArgCount>0);
+	wxLogMessage("==== Stack size ===== : %i", --StackSize);
 	return WolframState == WaitingForInput;
 	;
 }
@@ -153,8 +154,8 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 	{
 		// use raw bitmap access to write MONO8 data directly into the bitmap
 		ItCGrabResultPtr ItPtr(ptrGrabResult);
-		const int w = 10; // ptrGrabResult->GetWidth();
-		const int h = 10; // ptrGrabResult->GetHeight();
+		const int w = 20; // ptrGrabResult->GetWidth();
+		const int h = 20; // ptrGrabResult->GetHeight();
 
 		auto it = ItPtr.begin();
 		uint8_t* ptr = (uint8_t*) ptrGrabResult->GetBuffer();
@@ -171,7 +172,9 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 				//it++;
 			}
 		}
-		hello(&Array[0][0]);
+		//hello(&Array[0][0]);
+		hello(Array1);
+
 		int* dims1{ new int[2] { h, w } };
 		hello.setDims(dims1);
 		hello.setRank(2);
@@ -185,7 +188,7 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 
 		//hello.setHeads(head);
 		int* dims = hello.getDims();
-		arrayData = std::unique_ptr<uint8_t[], LLU::WS::ReleaseArray<uint8_t>>(&Array[0][0], hello);
+		arrayData = std::unique_ptr<uint8_t[], LLU::WS::ReleaseArray<uint8_t>>(Array1, hello);
 
 		try
 		{
