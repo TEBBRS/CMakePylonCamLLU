@@ -56,12 +56,13 @@ WolframEngine::State WolframEngine::PollEngine()
 void WolframEngine::CheckInput()
 {
 	StackSize = 0;
-	while (!CheckInputRecursive(0))
+	while (WolframState!=WaitingForInput)
 	{
+		CheckInputRecursive(0);
 	}
 
 }
-bool WolframEngine::CheckInputRecursive(bool initialCall, int NrOfArguments)
+void WolframEngine::CheckInputRecursive(int NrOfArguments)
 {
 	int argCount = 0;
 	int totalArgCount = NrOfArguments;
@@ -73,8 +74,8 @@ bool WolframEngine::CheckInputRecursive(bool initialCall, int NrOfArguments)
 	const char* errorMessage;
 	std::string head;
 	int type = 0;
-
-
+	bool initialCall = true;
+	wxLogMessage("==== Stack nesting level ===== : %i NrOfArguments %i", ++StackSize, totalArgCount);
 	do
 	{
 		type = WSGetType(link);
@@ -104,8 +105,8 @@ bool WolframEngine::CheckInputRecursive(bool initialCall, int NrOfArguments)
 			*pStreamObject >> *function;
 			argCount = function->getArgc();
 			head = function->getHead();
-			totalArgCount = argCount;
-	
+			if (StackSize==1)
+				totalArgCount = argCount;
 			wxLogMessage("Function  Head : %s Nr. of arguments : %i", head, argCount);
 
 
@@ -116,9 +117,8 @@ bool WolframEngine::CheckInputRecursive(bool initialCall, int NrOfArguments)
 			}
 			if (argCount > 0)
 			{
-				wxLogMessage("==== Stack nesting level ===== : %i NrOfArguments %i", ++StackSize, totalArgCount);
-				if (CheckInputRecursive(false, totalArgCount-1))
-					return true;
+				CheckInputRecursive(argCount);
+				totalArgCount -= 1;
 			}
 
 			delete function;
@@ -144,8 +144,6 @@ bool WolframEngine::CheckInputRecursive(bool initialCall, int NrOfArguments)
 		}
 	} while (totalArgCount>0);
 	wxLogMessage("==== Stack nesting level ===== : %i", --StackSize);
-	return WolframState == WaitingForInput;
-	;
 }
 
 void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
@@ -159,21 +157,17 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 
 		auto it = ItPtr.begin();
 		uint8_t* ptr = (uint8_t*) ptrGrabResult->GetBuffer();
-		//Array = new uint8_t*[h];
-		byte value = 0;
-		Array1 = (uint8_t *) malloc(h * w * sizeof(uint8_t));
+		Array = new uint8_t[w*h];
 		for (int i = 0; i < h; i++)
 		{
-			//Array[i] = new uint8_t[w];
 			for (int j = 0; j < w; j++)
 			{
-				Array1[i*h+j] = value++;
+				Array[i*h+j] = *it;
 				//wxLogMessage("i : %i ; j : %i; grayvalue : %i", i, j, Array[i][j]);
-				//it++;
+				it++;
 			}
 		}
-		//hello(&Array[0][0]);
-		hello(Array1);
+		hello(Array);
 
 		int* dims1{ new int[2] { h, w } };
 		hello.setDims(dims1);
@@ -188,12 +182,12 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 
 		//hello.setHeads(head);
 		int* dims = hello.getDims();
-		arrayData = std::unique_ptr<uint8_t[], LLU::WS::ReleaseArray<uint8_t>>(Array1, hello);
+		arrayData = std::unique_ptr<uint8_t[], LLU::WS::ReleaseArray<uint8_t>>(Array, hello);
 
 		try
 		{
 			//*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << "10";
-			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << LLU::WS::Function("Image", 2) << arrayData << "Byte";
+			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Short", 2) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << arrayData << "10";
 
 		}
 		catch (LLU::LibraryLinkError e)
