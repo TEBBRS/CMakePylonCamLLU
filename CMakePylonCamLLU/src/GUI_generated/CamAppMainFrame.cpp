@@ -124,6 +124,7 @@ void MainFrame::OnTimer(wxTimerEvent &event)
 				{
 
 					engine->CreateImage(grabResult);
+					//engine->CreateImageAsString(grabResult);
 					buttonPressed = false;
 				}
 				int w = grabResult->GetWidth();

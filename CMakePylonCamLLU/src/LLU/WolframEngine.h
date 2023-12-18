@@ -5,6 +5,7 @@
 #include <pylon/PylonIncludes.h>
 #include <vector>
 #include <string>
+#include <sstream>
 #include <array>
 class WolframEngine
 {
@@ -14,6 +15,7 @@ class WolframEngine
 		State PollEngine();
 		void CheckInput();
 		void CreateImage(Pylon::CGrabResultPtr ptrGrabResult);
+		void CreateImageAsString(Pylon::CGrabResultPtr ptrGrabResult);
 		void WolframEngine::CheckInputRecursive(int NrOfArguments);
 		~WolframEngine();
 

@@ -152,8 +152,8 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 	{
 		// use raw bitmap access to write MONO8 data directly into the bitmap
 		ItCGrabResultPtr ItPtr(ptrGrabResult);
-		const int w = 10; // ptrGrabResult->GetWidth();
-		const int h = 10; // ptrGrabResult->GetHeight();
+		const int w = 3; // ptrGrabResult->GetWidth();
+		const int h = 3; // ptrGrabResult->GetHeight();
 
 		auto it = ItPtr.begin();
 		uint8_t* ptr = (uint8_t*) ptrGrabResult->GetBuffer();
@@ -180,14 +180,60 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 		vec.push_back(nullptr);
 		char** head = vec.data();
 
-		//hello.setHeads(head);
+		hello.setHeads(head);
 		int* dims = hello.getDims();
 		arrayData = std::unique_ptr<uint8_t[], LLU::WS::ReleaseArray<uint8_t>>(Array, hello);
 
 		try
 		{
 			//*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << "10";
-			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Short", 2) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << arrayData << "10";
+			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Short", 2) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << arrayData << 10;
+
+		}
+		catch (LLU::LibraryLinkError e)
+		{
+			wxLogMessage("%s", e.message());
+		}
+		arrayData.release();
+		WolframState = Processing;
+	}
+}
+void WolframEngine::CreateImageAsString(Pylon::CGrabResultPtr ptrGrabResult)
+{
+	if (WolframState == WaitingForInput)
+	{
+		// use raw bitmap access to write MONO8 data directly into the bitmap
+		ItCGrabResultPtr ItPtr(ptrGrabResult);
+		const int w = ptrGrabResult->GetWidth();
+		const int h = ptrGrabResult->GetHeight();
+
+		auto it = ItPtr.begin();
+		uint8_t* ptr = (uint8_t*)ptrGrabResult->GetBuffer();
+		std::stringstream data;
+		data << "{";
+		for (int i = 0; i < h; i++)
+		{
+			data << "{";
+			for (int j = 0; j < w; j++)
+			{
+				data << int(*it);
+				//wxLogMessage("i : %i ; j : %i; grayvalue : %i", i, j, Array[i][j]);
+				it++;
+				if (j < (w - 1))
+					data << ",";
+			}
+			if (i < (h - 1))
+				data << "}, ";
+			else
+				data << "}";
+
+		}
+		data << "}";
+
+		try
+		{
+			//*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << "10";
+			*pStreamObject << LLU::WS::Function("EvaluatePacket", 1) << ((std::string) ("bart = ")).append(data.str());
 
 		}
 		catch (LLU::LibraryLinkError e)
@@ -198,6 +244,7 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 		WolframState = Processing;
 	}
 }
+
 WolframEngine::~WolframEngine()
 {
 	delete pStreamObject;
