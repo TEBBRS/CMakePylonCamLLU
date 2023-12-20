@@ -187,7 +187,7 @@ void WolframEngine::CreateImage(Pylon::CGrabResultPtr ptrGrabResult)
 		try
 		{
 			//*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << "10";
-			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Short", 2) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << arrayData << 10;
+			*pStreamObject << LLU::WS::Function("EnterExpressionPacket", 1) << LLU::WS::Function("Set", 2) << LLU::WS::Symbol("test") << LLU::WS::Function("RawArray",2)<< "Integer8" << arrayData;
 
 		}
 		catch (LLU::LibraryLinkError e)
